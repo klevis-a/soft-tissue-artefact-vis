@@ -1,16 +1,18 @@
 'use strict';
 
-import {BoneScene} from "./BoneScene.js";
-import {loadScript} from "./JSHelpers.js";
 import {CSVLoader} from "./CSVLoader.js";
 import {AnimationHelper} from "./AnimationHelper.js";
 import * as STA_CSV_Processor from "./STA_CSV_Processor.js";
+import {promiseLoadSTL} from "./MiscThreeHelpers.js";
+import {BoneSceneFnc} from "./BoneSceneFnc.js";
+import {WebGLRenderer} from "./vendor/three.js/build/three.module.js";
+import {divGeometry} from "./SceneHelpers.js";
 
 let animationHelper;
 let boneScene;
 
 function loadPapaParse() {
-    return new Promise(function (resolve, reject) {
+    return new Promise(function (resolve) {
         require(['./js/vendor/papaparse.js'], papa => resolve(papa));
     });
 }
@@ -32,12 +34,14 @@ function getBoneSceneElements() {
     }
 }
 
-const csvLoaderInit = loadScript('./js/vendor/require.js').then(() => loadPapaParse()).then(papa => new CSVLoader(papa));
+const csvLoaderInit = loadPapaParse().then(papa => new CSVLoader(papa));
 const landmarkInit = csvLoaderInit.then((csvLoader) => csvLoader.loadCsv('./csv/N005_CTdata_Input_for_mtwtesla.csv'));
 const staticCsvInit = csvLoaderInit.then((csvLoader) => csvLoader.loadCsv('./csv/N005_CA_t01_static.csv'));
 const timeSeriesCsvInit = csvLoaderInit.then((csvLoader) => csvLoader.loadCsv('./csv/N005_CA_t01.csv'));
+const humerusLoader = promiseLoadSTL('./models/humerus.stl');
+const scapulaLoader = promiseLoadSTL('./models/scapula.stl');
 
-Promise.all([BoneScene.loadHumerusScapula(), landmarkInit, staticCsvInit, timeSeriesCsvInit]).then(([loadedSTLs, landmarkResults, staticResults, timeSeriesResults]) => {
+Promise.all([humerusLoader, scapulaLoader, landmarkInit, staticCsvInit, timeSeriesCsvInit]).then(([humerusGeometry, scapulaGeometry, landmarkResults, staticResults, timeSeriesResults]) => {
     let {canvas, mainView, analysisGuiElement, sceneGuiElement} = getBoneSceneElements();
     let {playBtn, timeline, frameNumLbl} = getTimelineCtrlElements();
 
@@ -45,10 +49,17 @@ Promise.all([BoneScene.loadHumerusScapula(), landmarkInit, staticCsvInit, timeSe
     const staticInfo = new STA_CSV_Processor.StaticSTAInfo(staticResults);
     const timeSeriesInfo = new STA_CSV_Processor.TimeSeriesSTAInfo(timeSeriesResults);
 
-    boneScene = new BoneScene(canvas, mainView, analysisGuiElement, sceneGuiElement, loadedSTLs, landmarksInfo, staticInfo, timeSeriesInfo);
+    const renderer = new WebGLRenderer({canvas});
+    const {contentWidth, contentHeight} = divGeometry(mainView);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(contentWidth, contentHeight);
+    boneScene = new BoneSceneFnc(renderer, mainView, analysisGuiElement, sceneGuiElement, landmarksInfo, staticInfo, timeSeriesInfo, humerusGeometry, scapulaGeometry);
     boneScene.initScene();
     boneScene.createSceneGraph();
     boneScene.repositionSceneGraphs();
-    boneScene.createGUI();
+    //boneScene.createGUI();
     animationHelper = new AnimationHelper(boneScene, timeSeriesInfo.NumFrames, playBtn, timeline, frameNumLbl);
+
+    window.addEventListener('resize', () => boneScene.resizeScene());
 });
+
