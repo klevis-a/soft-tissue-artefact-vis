@@ -175,6 +175,8 @@ export class BoneSceneFnc {
     renderSceneGraph() {
         this.scene.background.set(BoneSceneFnc.MAIN_VIEW_COLOR);
         this.controls.update();
+        const {contentWidth, contentHeight} = this.viewGeometry;
+        this.dispatchEvent({type: 'preRender', contentWidth: contentWidth, contentHeight: contentHeight});
         this.renderer.render(this.scene, this.camera);
     }
 
