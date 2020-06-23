@@ -2,12 +2,14 @@
 
 import {CSVLoader} from "./CSVLoader.js";
 import {AnimationHelper} from "./AnimationHelper.js";
-import * as STA_CSV_Processor from "./STA_CSV_Processor.js";
+import {LandmarksInfo, StaticSTAInfo, TimeSeriesSTAInfo} from "./STA_CSV_Processor.js";
 import {promiseLoadSTL} from "./MiscThreeHelpers.js";
 import {BoneSceneFnc} from "./BoneSceneFnc.js";
+import "./BoneScene_Materials.js";
 import {WebGLRenderer} from "./vendor/three.js/build/three.module.js";
 import {divGeometry} from "./SceneHelpers.js";
 import {landmarks_decorator, addLandmarks} from "./BoneScene_Landmarks.js";
+import {viconMarkers_decorator, addViconMarkers} from "./BoneScene_ViconMarkers.js";
 
 let animationHelper;
 let boneScene;
@@ -46,17 +48,20 @@ Promise.all([humerusLoader, scapulaLoader, landmarkInit, staticCsvInit, timeSeri
     let {canvas, mainView, analysisGuiElement, sceneGuiElement} = getBoneSceneElements();
     let {playBtn, timeline, frameNumLbl} = getTimelineCtrlElements();
 
-    const landmarksInfo = new STA_CSV_Processor.LandmarksInfo(landmarkResults.data);
-    const staticInfo = new STA_CSV_Processor.StaticSTAInfo(staticResults);
-    const timeSeriesInfo = new STA_CSV_Processor.TimeSeriesSTAInfo(timeSeriesResults);
+    const landmarksInfo = new LandmarksInfo(landmarkResults.data);
+    const staticInfo = new StaticSTAInfo(staticResults);
+    const timeSeriesInfo = new TimeSeriesSTAInfo(timeSeriesResults);
 
     const renderer = new WebGLRenderer({canvas});
     const {contentWidth, contentHeight} = divGeometry(mainView);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(contentWidth, contentHeight);
     landmarks_decorator(BoneSceneFnc);
+    viconMarkers_decorator(BoneSceneFnc);
+
     boneScene = new BoneSceneFnc(renderer, mainView, analysisGuiElement, sceneGuiElement, landmarksInfo, staticInfo, timeSeriesInfo, humerusGeometry, scapulaGeometry);
     addLandmarks(boneScene);
+    addViconMarkers(boneScene);
     boneScene.initScene();
     boneScene.createSceneGraph();
     boneScene.repositionSceneGraphs();

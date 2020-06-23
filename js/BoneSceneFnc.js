@@ -149,21 +149,25 @@ export class BoneSceneFnc {
     }
 
     updateToFrame(frameNum) {
-        const currentFrame = Math.floor(frameNum);
+        let currentFrame = Math.floor(frameNum);
+        let nextFrame = null;
+        let interpFactor = null;
         if (currentFrame>=(this.timeSeriesInfo.NumFrames-1)) {
-            this.humerus.position.copy(this.timeSeriesInfo.humPosVector(this.timeSeriesInfo.NumFrames-1));
-            this.scapula.position.copy(this.timeSeriesInfo.scapPosVector(this.timeSeriesInfo.NumFrames-1));
-            this.humerus.quaternion.copy(this.timeSeriesInfo.humOrientQuat(this.timeSeriesInfo.NumFrames-1));
-            this.scapula.quaternion.copy(this.timeSeriesInfo.scapOrientQuat(this.timeSeriesInfo.NumFrames-1));
+            currentFrame = this.timeSeriesInfo.NumFrames-1;
+            this.humerus.position.copy(this.timeSeriesInfo.humPosVector(currentFrame));
+            this.scapula.position.copy(this.timeSeriesInfo.scapPosVector(currentFrame));
+            this.humerus.quaternion.copy(this.timeSeriesInfo.humOrientQuat(currentFrame));
+            this.scapula.quaternion.copy(this.timeSeriesInfo.scapOrientQuat(currentFrame));
         }
         else {
-            const nextFrame = Math.ceil(frameNum);
-            const interpFactor = frameNum - currentFrame;
+            nextFrame = Math.ceil(frameNum);
+            interpFactor = frameNum - currentFrame;
             this.humerus.position.copy(this.timeSeriesInfo.humPosVector(currentFrame).lerp(this.timeSeriesInfo.humPosVector(nextFrame), interpFactor));
             this.scapula.position.copy(this.timeSeriesInfo.scapPosVector(currentFrame).lerp(this.timeSeriesInfo.scapPosVector(nextFrame), interpFactor));
             this.humerus.quaternion.copy(this.timeSeriesInfo.humOrientQuat(currentFrame).slerp(this.timeSeriesInfo.humOrientQuat(nextFrame),interpFactor));
             this.scapula.quaternion.copy(this.timeSeriesInfo.scapOrientQuat(currentFrame).slerp(this.timeSeriesInfo.scapOrientQuat(nextFrame),interpFactor));
         }
+        this.dispatchEvent({type: 'frame', currentFrame: currentFrame, nextFrame: nextFrame, interpFactor: interpFactor});
     }
 
     renderSceneGraph() {
