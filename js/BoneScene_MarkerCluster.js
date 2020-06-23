@@ -1,14 +1,14 @@
-import {BoneSceneFnc} from "./BoneSceneFnc.js";
+import {BoneScene} from "./BoneScene.js";
 import {LineGeometry} from "./vendor/three.js/examples/jsm/lines/LineGeometry.js";
 import {Line2} from "./vendor/three.js/examples/jsm/lines/Line2.js";
 import {LineMaterial} from "./vendor/three.js/examples/jsm/lines/LineMaterial.js";
 
-BoneSceneFnc.HumerusMarkerOrder = ['RUPAA', 'RUPAB', 'RUPAC', 'RUPAD', 'RUPAA'];
-BoneSceneFnc.ScapulaMarkerOrder = ['RACRM', 'RSPIN', 'RANGL', 'RACRM', 'RSH0'];
+BoneScene.HumerusMarkerOrder = ['RUPAA', 'RUPAB', 'RUPAC', 'RUPAD', 'RUPAA'];
+BoneScene.ScapulaMarkerOrder = ['RACRM', 'RSPIN', 'RANGL', 'RACRM', 'RSH0'];
 
-BoneSceneFnc.prototype.addScapulaHumerusClusterNoSTA = function() {
+BoneScene.prototype.addScapulaHumerusClusterNoSTA = function() {
     const humPositions = [];
-    for (const markerName of BoneSceneFnc.HumerusMarkerOrder) {
+    for (const markerName of BoneScene.HumerusMarkerOrder) {
         const markerPosition = this.noSTAMarkers.humerus[markerName].position;
         humPositions.push(markerPosition.x, markerPosition.y, markerPosition.z);
     }
@@ -19,7 +19,7 @@ BoneSceneFnc.prototype.addScapulaHumerusClusterNoSTA = function() {
 
 
     const scapPositions = [];
-    for (const markerName of BoneSceneFnc.ScapulaMarkerOrder) {
+    for (const markerName of BoneScene.ScapulaMarkerOrder) {
         const markerPosition = this.noSTAMarkers.scapula[markerName].position;
         scapPositions.push(markerPosition.x, markerPosition.y, markerPosition.z);
     }
@@ -29,9 +29,9 @@ BoneSceneFnc.prototype.addScapulaHumerusClusterNoSTA = function() {
     this.scapula.add(this.scapulaClusterNoSTA);
 };
 
-BoneSceneFnc.prototype.addScapulaHumerusCluster = function() {
+BoneScene.prototype.addScapulaHumerusCluster = function() {
     const humPositions = [];
-    for (const markerName of BoneSceneFnc.HumerusMarkerOrder) {
+    for (const markerName of BoneScene.HumerusMarkerOrder) {
         const markerPosition = this.viconMarkers.humerus[markerName].position;
         humPositions.push(markerPosition.x, markerPosition.y, markerPosition.z);
     }
@@ -41,7 +41,7 @@ BoneSceneFnc.prototype.addScapulaHumerusCluster = function() {
     this.scene.add(this.humerusCluster);
 
     const scapPositions = [];
-    for (const markerName of BoneSceneFnc.ScapulaMarkerOrder) {
+    for (const markerName of BoneScene.ScapulaMarkerOrder) {
         const markerPosition = this.viconMarkers.scapula[markerName].position;
         scapPositions.push(markerPosition.x, markerPosition.y, markerPosition.z);
     }
@@ -67,7 +67,7 @@ export function enableMarkerClusters(boneScene) {
         const scene = event.target;
 
         const humPositions = [];
-        for (const markerName of BoneSceneFnc.HumerusMarkerOrder) {
+        for (const markerName of BoneScene.HumerusMarkerOrder) {
             const markerPosition = scene.viconMarkers.humerus[markerName].position;
             humPositions.push(markerPosition.x, markerPosition.y, markerPosition.z);
         }
@@ -75,7 +75,7 @@ export function enableMarkerClusters(boneScene) {
         scene.humerusCluster.geometry.attributes.instanceStart.data.needsUpdate = true;
 
         const scapPositions = [];
-        for (const markerName of BoneSceneFnc.ScapulaMarkerOrder) {
+        for (const markerName of BoneScene.ScapulaMarkerOrder) {
             const markerPosition = scene.viconMarkers.scapula[markerName].position;
             scapPositions.push(markerPosition.x, markerPosition.y, markerPosition.z);
         }

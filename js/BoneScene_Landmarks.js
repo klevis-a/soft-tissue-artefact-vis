@@ -1,29 +1,29 @@
-import {BoneSceneFnc} from "./BoneSceneFnc.js";
+import {BoneScene} from "./BoneScene.js";
 import {Mesh, SphereBufferGeometry} from "./vendor/three.js/build/three.module.js";
 
-BoneSceneFnc.LANDMARK_GEOMETRY = new SphereBufferGeometry(3.5, 10, 10);
+BoneScene.LANDMARK_GEOMETRY = new SphereBufferGeometry(3.5, 10, 10);
 
-BoneSceneFnc.createLandmark = function (material, position) {
-    const mesh = new Mesh(BoneSceneFnc.LANDMARK_GEOMETRY, material);
+BoneScene.createLandmark = function (material, position) {
+    const mesh = new Mesh(BoneScene.LANDMARK_GEOMETRY, material);
     mesh.position.copy(position);
     return mesh;
 };
 
-BoneSceneFnc.prototype.addLandmark = function (name, segment, material) {
-    this.landmarks[segment][name] = BoneSceneFnc.createLandmark(material, this.landmarksInfo_Segment[segment][name]);
+BoneScene.prototype.addLandmark = function (name, segment, material) {
+    this.landmarks[segment][name] = BoneScene.createLandmark(material, this.landmarksInfo_Segment[segment][name]);
     this[segment].add(this.landmarks[segment][name]);
 };
 
-BoneSceneFnc.prototype.addLandmarks = function() {
-    this.addLandmark('hhc', 'humerus', BoneSceneFnc.BLACK_MARKER_MATERIAL);
-    this.addLandmark('me', 'humerus', BoneSceneFnc.RED_MARKER_MATERIAL);
-    this.addLandmark('le', 'humerus', BoneSceneFnc.GREEN_MARKER_MATERIAL);
+BoneScene.prototype.addLandmarks = function() {
+    this.addLandmark('hhc', 'humerus', BoneScene.BLACK_MARKER_MATERIAL);
+    this.addLandmark('me', 'humerus', BoneScene.RED_MARKER_MATERIAL);
+    this.addLandmark('le', 'humerus', BoneScene.GREEN_MARKER_MATERIAL);
 
-    this.addLandmark('gc', 'scapula', BoneSceneFnc.BLACK_MARKER_MATERIAL);
-    this.addLandmark('ac', 'scapula', BoneSceneFnc.RED_MARKER_MATERIAL);
-    this.addLandmark('pla', 'scapula', BoneSceneFnc.GREEN_MARKER_MATERIAL);
-    this.addLandmark('ts', 'scapula', BoneSceneFnc.BLUE_MARKER_MATERIAL);
-    this.addLandmark('ia', 'scapula', BoneSceneFnc.YELLOW_MARKER_MATERIAL);
+    this.addLandmark('gc', 'scapula', BoneScene.BLACK_MARKER_MATERIAL);
+    this.addLandmark('ac', 'scapula', BoneScene.RED_MARKER_MATERIAL);
+    this.addLandmark('pla', 'scapula', BoneScene.GREEN_MARKER_MATERIAL);
+    this.addLandmark('ts', 'scapula', BoneScene.BLUE_MARKER_MATERIAL);
+    this.addLandmark('ia', 'scapula', BoneScene.YELLOW_MARKER_MATERIAL);
 };
 
 export function enableLandmarks(boneScene) {

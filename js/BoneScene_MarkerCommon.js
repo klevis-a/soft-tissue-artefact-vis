@@ -1,15 +1,15 @@
-import {BoneSceneFnc} from "./BoneSceneFnc.js";
+import {BoneScene} from "./BoneScene.js";
 import {MeshPhongMaterial, Mesh, SphereBufferGeometry} from "./vendor/three.js/build/three.module.js";
 
-BoneSceneFnc.BLACK_MARKER_MATERIAL = new MeshPhongMaterial({color: 0x000000});
-BoneSceneFnc.RED_MARKER_MATERIAL = new MeshPhongMaterial({color: 0xff0000, opacity: 0.7, transparent: true});
-BoneSceneFnc.GREEN_MARKER_MATERIAL = new MeshPhongMaterial({color: 0x00ff00, opacity: 0.7, transparent: true});
-BoneSceneFnc.BLUE_MARKER_MATERIAL = new MeshPhongMaterial({color: 0x0000ff, opacity: 0.7, transparent: true});
-BoneSceneFnc.YELLOW_MARKER_MATERIAL = new MeshPhongMaterial({color: 0xffff00, opacity: 0.7, transparent: true});
-BoneSceneFnc.GRAY_MARKER_MATERIAL = new MeshPhongMaterial({color: 0x787878});
-BoneSceneFnc.MARKER_GEOMETRY = new SphereBufferGeometry(7, 10, 10);
+BoneScene.BLACK_MARKER_MATERIAL = new MeshPhongMaterial({color: 0x000000});
+BoneScene.RED_MARKER_MATERIAL = new MeshPhongMaterial({color: 0xff0000, opacity: 0.7, transparent: true});
+BoneScene.GREEN_MARKER_MATERIAL = new MeshPhongMaterial({color: 0x00ff00, opacity: 0.7, transparent: true});
+BoneScene.BLUE_MARKER_MATERIAL = new MeshPhongMaterial({color: 0x0000ff, opacity: 0.7, transparent: true});
+BoneScene.YELLOW_MARKER_MATERIAL = new MeshPhongMaterial({color: 0xffff00, opacity: 0.7, transparent: true});
+BoneScene.GRAY_MARKER_MATERIAL = new MeshPhongMaterial({color: 0x787878});
+BoneScene.MARKER_GEOMETRY = new SphereBufferGeometry(7, 10, 10);
 
-BoneSceneFnc.segmentFriendNameMap = new Map([
+BoneScene.segmentFriendNameMap = new Map([
     ['thorax', 'Thorax'],
     ['clavicle', 'Clavicle'],
     ['leftScapula', 'Left Scapula'],
@@ -19,8 +19,8 @@ BoneSceneFnc.segmentFriendNameMap = new Map([
     ['rightHand', 'Hand'],
 ]);
 
-BoneSceneFnc.createMarker = function(material, position) {
-    const mesh = new Mesh(BoneSceneFnc.MARKER_GEOMETRY, material);
+BoneScene.createMarker = function(material, position) {
+    const mesh = new Mesh(BoneScene.MARKER_GEOMETRY, material);
     mesh.position.copy(position);
     return mesh;
 };
@@ -44,7 +44,7 @@ export function enableMarkerGUI(boneScene) {
 
         const viconMarkerFolder = gui.addFolder('Vicon Marker Visibility');
         for (const segmentName in scene.markerSegmentVisibility) {
-            viconMarkerFolder.add(scene.markerSegmentVisibility, segmentName).name(BoneSceneFnc.segmentFriendNameMap.get(segmentName)).onChange(() => {
+            viconMarkerFolder.add(scene.markerSegmentVisibility, segmentName).name(BoneScene.segmentFriendNameMap.get(segmentName)).onChange(() => {
                 const currentSegment = scene.viconMarkers[segmentName];
                 for (const markerName in currentSegment) {
                     currentSegment[markerName].visible = scene.markerSegmentVisibility[segmentName];

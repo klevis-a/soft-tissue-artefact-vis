@@ -1,10 +1,10 @@
-import {BoneSceneFnc} from "./BoneSceneFnc.js";
+import {BoneScene} from "./BoneScene.js";
 import {Vector3} from "./vendor/three.js/build/three.module.js";
 import {LineMaterial} from "./vendor/three.js/examples/jsm/lines/LineMaterial.js";
 import {LineGeometry} from "./vendor/three.js/examples/jsm/lines/LineGeometry.js";
 import {Line2} from "./vendor/three.js/examples/jsm/lines/Line2.js";
 
-BoneSceneFnc.SegmentNoSTALineMaterials = new Map([
+BoneScene.SegmentNoSTALineMaterials = new Map([
     ['RUPAA', 'RED_NOSTA_LINE_MATERIAL'],
     ['RUPAB', 'GREEN_NOSTA_LINE_MATERIAL'],
     ['RUPAC', 'BLUE_NOSTA_LINE_MATERIAL'],
@@ -15,7 +15,7 @@ BoneSceneFnc.SegmentNoSTALineMaterials = new Map([
     ['RANGL', 'YELLOW_NOSTA_LINE_MATERIAL'],
 ]);
 
-BoneSceneFnc.prototype.addNoSTAMarkerTrace = function(markerName, segmentName, material) {
+BoneScene.prototype.addNoSTAMarkerTrace = function(markerName, segmentName, material) {
     if (this.noSTAMarkerTraces.Lines[segmentName] === undefined) {
         this.noSTAMarkerTraces.Lines[segmentName] = {};
     }
@@ -61,16 +61,16 @@ BoneSceneFnc.prototype.addNoSTAMarkerTrace = function(markerName, segmentName, m
     this.noSTAMarkerTraces.Lines[segmentName][markerName].geometry.maxInstancedCount = this.noSTAMarkerTraces.NumSegments[segmentName][markerName][0];
 };
 
-BoneSceneFnc.prototype.addNoSTAMarkerTraces = function () {
-    this.addNoSTAMarkerTrace('RUPAA', 'humerus', this[BoneSceneFnc.SegmentNoSTALineMaterials.get('RUPAA')]);
-    this.addNoSTAMarkerTrace('RUPAB', 'humerus', this[BoneSceneFnc.SegmentNoSTALineMaterials.get('RUPAB')]);
-    this.addNoSTAMarkerTrace('RUPAC', 'humerus', this[BoneSceneFnc.SegmentNoSTALineMaterials.get('RUPAC')]);
-    this.addNoSTAMarkerTrace('RUPAD', 'humerus', this[BoneSceneFnc.SegmentNoSTALineMaterials.get('RUPAD')]);
+BoneScene.prototype.addNoSTAMarkerTraces = function () {
+    this.addNoSTAMarkerTrace('RUPAA', 'humerus', this[BoneScene.SegmentNoSTALineMaterials.get('RUPAA')]);
+    this.addNoSTAMarkerTrace('RUPAB', 'humerus', this[BoneScene.SegmentNoSTALineMaterials.get('RUPAB')]);
+    this.addNoSTAMarkerTrace('RUPAC', 'humerus', this[BoneScene.SegmentNoSTALineMaterials.get('RUPAC')]);
+    this.addNoSTAMarkerTrace('RUPAD', 'humerus', this[BoneScene.SegmentNoSTALineMaterials.get('RUPAD')]);
 
-    this.addNoSTAMarkerTrace('RSH0', 'scapula', this[BoneSceneFnc.SegmentNoSTALineMaterials.get('RSH0')]);
-    this.addNoSTAMarkerTrace('RACRM', 'scapula', this[BoneSceneFnc.SegmentNoSTALineMaterials.get('RACRM')]);
-    this.addNoSTAMarkerTrace('RSPIN', 'scapula', this[BoneSceneFnc.SegmentNoSTALineMaterials.get('RSPIN')]);
-    this.addNoSTAMarkerTrace('RANGL', 'scapula', this[BoneSceneFnc.SegmentNoSTALineMaterials.get('RANGL')]);
+    this.addNoSTAMarkerTrace('RSH0', 'scapula', this[BoneScene.SegmentNoSTALineMaterials.get('RSH0')]);
+    this.addNoSTAMarkerTrace('RACRM', 'scapula', this[BoneScene.SegmentNoSTALineMaterials.get('RACRM')]);
+    this.addNoSTAMarkerTrace('RSPIN', 'scapula', this[BoneScene.SegmentNoSTALineMaterials.get('RSPIN')]);
+    this.addNoSTAMarkerTrace('RANGL', 'scapula', this[BoneScene.SegmentNoSTALineMaterials.get('RANGL')]);
 };
 
 export function enableNoSTAMarkerTraces(boneScene) {

@@ -1,7 +1,7 @@
-import {BoneSceneFnc} from "./BoneSceneFnc.js";
+import {BoneScene} from "./BoneScene.js";
 import {Vector3} from "./vendor/three.js/build/three.module.js";
 
-BoneSceneFnc.MarkerSegmentMap = new Map([
+BoneScene.MarkerSegmentMap = new Map([
     ['T10','thorax'],
     ['T5','thorax'],
     ['C7','thorax'],
@@ -28,37 +28,37 @@ BoneSceneFnc.MarkerSegmentMap = new Map([
     ['RHNDD','rightHand'],
 ]);
 
-BoneSceneFnc.SegmentMarkerMaterials = new Map([
-    ['RUPAA', BoneSceneFnc.RED_MARKER_MATERIAL],
-    ['RUPAB', BoneSceneFnc.GREEN_MARKER_MATERIAL],
-    ['RUPAC', BoneSceneFnc.BLUE_MARKER_MATERIAL],
-    ['RUPAD', BoneSceneFnc.YELLOW_MARKER_MATERIAL],
-    ['RSH0', BoneSceneFnc.RED_MARKER_MATERIAL],
-    ['RACRM', BoneSceneFnc.GREEN_MARKER_MATERIAL],
-    ['RSPIN', BoneSceneFnc.BLUE_MARKER_MATERIAL],
-    ['RANGL', BoneSceneFnc.YELLOW_MARKER_MATERIAL],
+BoneScene.SegmentMarkerMaterials = new Map([
+    ['RUPAA', BoneScene.RED_MARKER_MATERIAL],
+    ['RUPAB', BoneScene.GREEN_MARKER_MATERIAL],
+    ['RUPAC', BoneScene.BLUE_MARKER_MATERIAL],
+    ['RUPAD', BoneScene.YELLOW_MARKER_MATERIAL],
+    ['RSH0', BoneScene.RED_MARKER_MATERIAL],
+    ['RACRM', BoneScene.GREEN_MARKER_MATERIAL],
+    ['RSPIN', BoneScene.BLUE_MARKER_MATERIAL],
+    ['RANGL', BoneScene.YELLOW_MARKER_MATERIAL],
 ]);
 
-BoneSceneFnc.prototype.addViconMarker = function (name, segmentName, material) {
+BoneScene.prototype.addViconMarker = function (name, segmentName, material) {
     if (this.viconMarkers[segmentName] == null) {
         this.viconMarkers[segmentName] = {};
     }
     const markerPos = this.timeSeriesInfo.markerPosVector(name, 0);
     if (markerPos == null) {
-        this.viconMarkers[segmentName][name] = BoneSceneFnc.createMarker(material, new Vector3());
+        this.viconMarkers[segmentName][name] = BoneScene.createMarker(material, new Vector3());
         this.viconMarkers[segmentName][name].visible = false;
     }
     else {
-        this.viconMarkers[segmentName][name] = BoneSceneFnc.createMarker(material, markerPos);
+        this.viconMarkers[segmentName][name] = BoneScene.createMarker(material, markerPos);
         this.viconMarkers[segmentName][name].visible = this.markerSegmentVisibility[segmentName];
     }
     this.scene.add(this.viconMarkers[segmentName][name]);
 };
 
-BoneSceneFnc.prototype.addViconMarkers = function () {
+BoneScene.prototype.addViconMarkers = function () {
     for (const markerName of this.timeSeriesInfo.Markers.keys()) {
-        const markerMaterial = BoneSceneFnc.SegmentMarkerMaterials.get(markerName) || BoneSceneFnc.GRAY_MARKER_MATERIAL;
-        this.addViconMarker(markerName, BoneSceneFnc.MarkerSegmentMap.get(markerName), markerMaterial);
+        const markerMaterial = BoneScene.SegmentMarkerMaterials.get(markerName) || BoneScene.GRAY_MARKER_MATERIAL;
+        this.addViconMarker(markerName, BoneScene.MarkerSegmentMap.get(markerName), markerMaterial);
     }
 };
 

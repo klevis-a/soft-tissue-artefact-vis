@@ -4,8 +4,7 @@ import {CSVLoader} from "./CSVLoader.js";
 import {AnimationHelper} from "./AnimationHelper.js";
 import {LandmarksInfo, StaticSTAInfo, TimeSeriesSTAInfo} from "./STA_CSV_Processor.js";
 import {promiseLoadSTL} from "./MiscThreeHelpers.js";
-import {BoneSceneFnc} from "./BoneSceneFnc.js";
-import "./BoneScene_MarkerCommon.js";
+import {BoneScene} from "./BoneScene.js";
 import {WebGLRenderer} from "./vendor/three.js/build/three.module.js";
 import {divGeometry} from "./SceneHelpers.js";
 import {addCommonMarkerFields, enableMarkerGUI} from "./BoneScene_MarkerCommon.js";
@@ -63,7 +62,7 @@ Promise.all([humerusLoader, scapulaLoader, landmarkInit, staticCsvInit, timeSeri
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(contentWidth, contentHeight);
 
-    boneScene = new BoneSceneFnc(renderer, mainView, analysisGuiElement, sceneGuiElement, landmarksInfo, staticInfo, timeSeriesInfo, humerusGeometry, scapulaGeometry);
+    boneScene = new BoneScene(renderer, mainView, analysisGuiElement, sceneGuiElement, landmarksInfo, staticInfo, timeSeriesInfo, humerusGeometry, scapulaGeometry);
     addCommonMarkerFields(boneScene);
     enableLandmarks(boneScene);
     enableViconMarkers(boneScene);

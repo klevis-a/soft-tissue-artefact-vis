@@ -1,9 +1,9 @@
-import {BoneSceneFnc} from "./BoneSceneFnc.js";
+import {BoneScene} from "./BoneScene.js";
 import {LineMaterial} from "./vendor/three.js/examples/jsm/lines/LineMaterial.js";
 import {LineGeometry} from "./vendor/three.js/examples/jsm/lines/LineGeometry.js";
 import {Line2} from "./vendor/three.js/examples/jsm/lines/Line2.js";
 
-BoneSceneFnc.SegmentLineMaterials = new Map([
+BoneScene.SegmentLineMaterials = new Map([
     ['RUPAA', 'RED_LINE_MATERIAL'],
     ['RUPAB', 'GREEN_LINE_MATERIAL'],
     ['RUPAC', 'BLUE_LINE_MATERIAL'],
@@ -14,7 +14,7 @@ BoneSceneFnc.SegmentLineMaterials = new Map([
     ['RANGL', 'YELLOW_LINE_MATERIAL'],
 ]);
 
-BoneSceneFnc.prototype.addViconMarkerTrace = function(markerName, segmentName, material) {
+BoneScene.prototype.addViconMarkerTrace = function(markerName, segmentName, material) {
     if (this.viconMarkerTraces.Lines[segmentName] === undefined) {
         this.viconMarkerTraces.Lines[segmentName] = {};
     }
@@ -42,16 +42,16 @@ BoneSceneFnc.prototype.addViconMarkerTrace = function(markerName, segmentName, m
     this.viconMarkerTraces.Lines[segmentName][markerName].geometry.maxInstancedCount = this.viconMarkerTraces.NumSegments[segmentName][markerName][0];
 };
 
-BoneSceneFnc.prototype.addViconMarkerTraces = function() {
-    this.addViconMarkerTrace('RUPAA', 'humerus', this[BoneSceneFnc.SegmentLineMaterials.get('RUPAA')]);
-    this.addViconMarkerTrace('RUPAB', 'humerus', this[BoneSceneFnc.SegmentLineMaterials.get('RUPAB')]);
-    this.addViconMarkerTrace('RUPAC', 'humerus', this[BoneSceneFnc.SegmentLineMaterials.get('RUPAC')]);
-    this.addViconMarkerTrace('RUPAD', 'humerus', this[BoneSceneFnc.SegmentLineMaterials.get('RUPAD')]);
+BoneScene.prototype.addViconMarkerTraces = function() {
+    this.addViconMarkerTrace('RUPAA', 'humerus', this[BoneScene.SegmentLineMaterials.get('RUPAA')]);
+    this.addViconMarkerTrace('RUPAB', 'humerus', this[BoneScene.SegmentLineMaterials.get('RUPAB')]);
+    this.addViconMarkerTrace('RUPAC', 'humerus', this[BoneScene.SegmentLineMaterials.get('RUPAC')]);
+    this.addViconMarkerTrace('RUPAD', 'humerus', this[BoneScene.SegmentLineMaterials.get('RUPAD')]);
 
-    this.addViconMarkerTrace('RSH0', 'scapula', this[BoneSceneFnc.SegmentLineMaterials.get('RSH0')]);
-    this.addViconMarkerTrace('RACRM', 'scapula', this[BoneSceneFnc.SegmentLineMaterials.get('RACRM')]);
-    this.addViconMarkerTrace('RSPIN', 'scapula', this[BoneSceneFnc.SegmentLineMaterials.get('RSPIN')]);
-    this.addViconMarkerTrace('RANGL', 'scapula', this[BoneSceneFnc.SegmentLineMaterials.get('RANGL')]);
+    this.addViconMarkerTrace('RSH0', 'scapula', this[BoneScene.SegmentLineMaterials.get('RSH0')]);
+    this.addViconMarkerTrace('RACRM', 'scapula', this[BoneScene.SegmentLineMaterials.get('RACRM')]);
+    this.addViconMarkerTrace('RSPIN', 'scapula', this[BoneScene.SegmentLineMaterials.get('RSPIN')]);
+    this.addViconMarkerTrace('RANGL', 'scapula', this[BoneScene.SegmentLineMaterials.get('RANGL')]);
 };
 
 export function enableViconMarkerTraces(boneScene) {
