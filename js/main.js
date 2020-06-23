@@ -5,11 +5,13 @@ import {AnimationHelper} from "./AnimationHelper.js";
 import {LandmarksInfo, StaticSTAInfo, TimeSeriesSTAInfo} from "./STA_CSV_Processor.js";
 import {promiseLoadSTL} from "./MiscThreeHelpers.js";
 import {BoneSceneFnc} from "./BoneSceneFnc.js";
-import "./BoneScene_Materials.js";
+import "./BoneScene_MarkerCommon.js";
 import {WebGLRenderer} from "./vendor/three.js/build/three.module.js";
 import {divGeometry} from "./SceneHelpers.js";
-import {landmarks_decorator, addLandmarks} from "./BoneScene_Landmarks.js";
-import {viconMarkers_decorator, addViconMarkers} from "./BoneScene_ViconMarkers.js";
+import {enableLandmarks} from "./BoneScene_Landmarks.js";
+import {enableViconMarkers} from "./BoneScene_ViconMarkers.js";
+import {addCommonMarkerFields} from "./BoneScene_MarkerCommon.js";
+import {enableNoSTAMarkers} from "./BoneScene_NoSTAMarkers.js";
 
 let animationHelper;
 let boneScene;
@@ -56,12 +58,12 @@ Promise.all([humerusLoader, scapulaLoader, landmarkInit, staticCsvInit, timeSeri
     const {contentWidth, contentHeight} = divGeometry(mainView);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(contentWidth, contentHeight);
-    landmarks_decorator(BoneSceneFnc);
-    viconMarkers_decorator(BoneSceneFnc);
 
     boneScene = new BoneSceneFnc(renderer, mainView, analysisGuiElement, sceneGuiElement, landmarksInfo, staticInfo, timeSeriesInfo, humerusGeometry, scapulaGeometry);
-    addLandmarks(boneScene);
-    addViconMarkers(boneScene);
+    addCommonMarkerFields(boneScene);
+    enableLandmarks(boneScene);
+    enableViconMarkers(boneScene);
+    enableNoSTAMarkers(boneScene);
     boneScene.initScene();
     boneScene.createSceneGraph();
     boneScene.repositionSceneGraphs();
