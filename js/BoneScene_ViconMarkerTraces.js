@@ -65,7 +65,6 @@ export function enableViconMarkerTraces(boneScene) {
     boneScene.GREEN_LINE_MATERIAL = new LineMaterial({color:0x00ff00, linewidth:3});
     boneScene.BLUE_LINE_MATERIAL = new LineMaterial({color:0x0000ff, linewidth:3});
     boneScene.YELLOW_LINE_MATERIAL = new LineMaterial({color:0xffff00, linewidth:3});
-    boneScene.BLACK_LINE_MATERIAL = new LineMaterial({color:0x000000, linewidth:3});
 
     boneScene.addEventListener('init', function (event) {
         const scene = event.target;
@@ -91,6 +90,5 @@ export function enableViconMarkerTraces(boneScene) {
         scene.GREEN_LINE_MATERIAL.resolution.set(contentWidth, contentHeight);
         scene.BLUE_LINE_MATERIAL.resolution.set(contentWidth, contentHeight);
         scene.YELLOW_LINE_MATERIAL.resolution.set(contentWidth, contentHeight);
-        scene.BLACK_LINE_MATERIAL.resolution.set(contentWidth, contentHeight);
     });
 }
