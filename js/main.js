@@ -7,6 +7,7 @@ import {promiseLoadSTL} from "./MiscThreeHelpers.js";
 import {BoneSceneFnc} from "./BoneSceneFnc.js";
 import {WebGLRenderer} from "./vendor/three.js/build/three.module.js";
 import {divGeometry} from "./SceneHelpers.js";
+import {landmarks_decorator, addLandmarks} from "./BoneScene_Landmarks.js";
 
 let animationHelper;
 let boneScene;
@@ -53,7 +54,9 @@ Promise.all([humerusLoader, scapulaLoader, landmarkInit, staticCsvInit, timeSeri
     const {contentWidth, contentHeight} = divGeometry(mainView);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(contentWidth, contentHeight);
+    landmarks_decorator(BoneSceneFnc);
     boneScene = new BoneSceneFnc(renderer, mainView, analysisGuiElement, sceneGuiElement, landmarksInfo, staticInfo, timeSeriesInfo, humerusGeometry, scapulaGeometry);
+    addLandmarks(boneScene);
     boneScene.initScene();
     boneScene.createSceneGraph();
     boneScene.repositionSceneGraphs();

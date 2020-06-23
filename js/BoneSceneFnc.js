@@ -1,4 +1,4 @@
-import {WebGLRenderer, Scene, SphereBufferGeometry, MeshPhongMaterial, Mesh, Color, Vector3, Matrix4, PlaneBufferGeometry,
+import {EventDispatcher, Scene, MeshPhongMaterial, Mesh, Color, Vector3, Matrix4, PlaneBufferGeometry,
     ShadowMaterial, PerspectiveCamera, GridHelper, HemisphereLight, DirectionalLight, SpotLight} from "./vendor/three.js/build/three.module.js";
 import {divGeometry, computeCameraDistance} from "./SceneHelpers.js";
 import SVD from "./vendor/svd.js";
@@ -83,6 +83,8 @@ export class BoneSceneFnc {
         const gc = this.landmarksInfo_BB.scapula.gc;
         const ia = this.landmarksInfo_BB.scapula.ia;
         const ts = this.landmarksInfo_BB.scapula.ts;
+        const pla = this.landmarksInfo_BB.scapula.pla;
+        const ac = this.landmarksInfo_BB.scapula.ac;
 
         const z_axis = new Vector3().subVectors(gc, ts);
         const x_axis = new Vector3().crossVectors(z_axis, new Vector3().subVectors(ia, ts));
@@ -98,6 +100,8 @@ export class BoneSceneFnc {
         this.landmarksInfo_Segment.scapula.gc = new Vector3().copy(gc).applyMatrix4(S_T_BB);
         this.landmarksInfo_Segment.scapula.ia = new Vector3().copy(ia).applyMatrix4(S_T_BB);
         this.landmarksInfo_Segment.scapula.ts = new Vector3().copy(ts).applyMatrix4(S_T_BB);
+        this.landmarksInfo_Segment.scapula.pla = new Vector3().copy(pla).applyMatrix4(S_T_BB);
+        this.landmarksInfo_Segment.scapula.ac = new Vector3().copy(ac).applyMatrix4(S_T_BB);
     }
 
     computeThoraxGlobalCS(scenePosHelper){
@@ -181,6 +185,7 @@ export class BoneSceneFnc {
         this.computeCameraDistance();
         const scenePosHelper = new ScenePositionHelper(this.humerus, this.scapula, this.landmarksInfo_Segment);
         this.computeThoraxGlobalCS(scenePosHelper);
+        this.dispatchEvent({type: 'init'});
     }
 
     createSceneGraph() {
@@ -353,3 +358,5 @@ export class BoneSceneFnc {
         this.spotLightBelow.target.updateMatrixWorld();
     }
 }
+
+Object.assign(BoneSceneFnc.prototype, EventDispatcher.prototype);
