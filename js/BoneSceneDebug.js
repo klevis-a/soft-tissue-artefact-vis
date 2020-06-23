@@ -1,6 +1,6 @@
+import {BoxHelper, CameraHelper, PerspectiveCamera, HemisphereLightHelper, DirectionalLightHelper, SpotLightHelper, AxesHelper, Vector3} from "./vendor/three.js/build/three.module.js";
 import {BoneScene} from "./BoneScene.js";
-import * as SceneHelpers from "./SceneHelpers.js";
-import * as THREE from "./vendor/three.js/build/three.module.js";
+import {divGeometry} from "./SceneHelpers.js";
 import {TrackballControls} from "./vendor/three.js/examples/jsm/controls/TrackballControls.js";
 import {GUI} from "./vendor/three.js/examples/jsm/libs/dat.gui.module.js";
 import Stats from "./vendor/three.js/examples/jsm/libs/stats.module.js"
@@ -21,17 +21,17 @@ export class BoneSceneDebug extends BoneScene{
     }
 
     get debugViewGeometry() {
-        return SceneHelpers.divGeometry(this.debugView);
+        return divGeometry(this.debugView);
     }
 
     get containerViewGeometry() {
-        return SceneHelpers.divGeometry(this.containerView);
+        return divGeometry(this.containerView);
     }
 
     addSTLsToScene() {
         super.addSTLsToScene();
-        this.sceneHelpers.humerusBoundingBox = new THREE.BoxHelper(this.humerus, 0xffffff);
-        this.sceneHelpers.scapulaBoundingBox = new THREE.BoxHelper(this.scapula, 0xffffff);
+        this.sceneHelpers.humerusBoundingBox = new BoxHelper(this.humerus, 0xffffff);
+        this.sceneHelpers.scapulaBoundingBox = new BoxHelper(this.scapula, 0xffffff);
         this.scene.add(this.sceneHelpers.humerusBoundingBox);
         this.scene.add(this.sceneHelpers.scapulaBoundingBox);
     }
@@ -105,7 +105,7 @@ export class BoneSceneDebug extends BoneScene{
     }
 
     createMainCameraHelper() {
-        this.sceneHelpers.mainCameraHelper = new THREE.CameraHelper(this.camera);
+        this.sceneHelpers.mainCameraHelper = new CameraHelper(this.camera);
         this.scene.add(this.sceneHelpers.mainCameraHelper);
     }
 
@@ -113,7 +113,7 @@ export class BoneSceneDebug extends BoneScene{
         const fov = 75;
         const aspectRatio = this.debugViewGeometry.aspectRatio;
         this.debugCamera =
-            new THREE.PerspectiveCamera(fov, aspectRatio, this._mainCameraDistance / 10, this._mainCameraDistance * 10);
+            new PerspectiveCamera(fov, aspectRatio, this._mainCameraDistance / 10, this._mainCameraDistance * 10);
     }
 
     createDebugControls() {
@@ -122,30 +122,30 @@ export class BoneSceneDebug extends BoneScene{
     }
 
     createHemisphereLightHelper() {
-        this.sceneHelpers.hemisphereLightHelper = new THREE.HemisphereLightHelper(this.hemisphereLight, 50);
+        this.sceneHelpers.hemisphereLightHelper = new HemisphereLightHelper(this.hemisphereLight, 50);
         this.scene.add(this.sceneHelpers.hemisphereLightHelper);
     }
 
     createDirectionalLightHelper() {
-        this.sceneHelpers.directionalLightHelper = new THREE.DirectionalLightHelper(this.directionalLight,50);
+        this.sceneHelpers.directionalLightHelper = new DirectionalLightHelper(this.directionalLight,50);
         this.scene.add(this.sceneHelpers.directionalLightHelper);
 
-        this.sceneHelpers.directionalLightCameraHelper = new THREE.CameraHelper(this.directionalLight.shadow.camera);
+        this.sceneHelpers.directionalLightCameraHelper = new CameraHelper(this.directionalLight.shadow.camera);
         this.scene.add(this.sceneHelpers.directionalLightCameraHelper);
     }
 
     createSpotLightAboveHelper() {
-        this.sceneHelpers.spotLightAboveHelper = new THREE.SpotLightHelper(this.spotLightAbove);
+        this.sceneHelpers.spotLightAboveHelper = new SpotLightHelper(this.spotLightAbove);
         this.scene.add(this.sceneHelpers.spotLightAboveHelper);
     }
 
     createSpotLightBelowHelper() {
-        this.sceneHelpers.spotLightBelowHelper = new THREE.SpotLightHelper(this.spotLightBelow);
+        this.sceneHelpers.spotLightBelowHelper = new SpotLightHelper(this.spotLightBelow);
         this.scene.add(this.sceneHelpers.spotLightBelowHelper);
     }
 
     createSceneAxesHelper() {
-        this.sceneHelpers.sceneAxesHelper = new THREE.AxesHelper(this.humerusLength);
+        this.sceneHelpers.sceneAxesHelper = new AxesHelper(this.humerusLength);
         this.scene.add(this.sceneHelpers.sceneAxesHelper);
     }
 
@@ -182,8 +182,8 @@ export class BoneSceneDebug extends BoneScene{
 
     repositionDebugCamera() {
         this.debugCamera.position.addVectors(this.grid.position,
-            new THREE.Vector3().copy(this.frontVector).multiplyScalar(this._mainCameraDistance).multiplyScalar(-3))
-            .add(new THREE.Vector3().copy(this.staticInfo.upVector()).multiplyScalar(this.humerusLength*2));
+            new Vector3().copy(this.frontVector).multiplyScalar(this._mainCameraDistance).multiplyScalar(-3))
+            .add(new Vector3().copy(this.staticInfo.upVector()).multiplyScalar(this.humerusLength*2));
         this.debugCamera.up.copy(this.staticInfo.upVector());
         this.debugCamera.updateProjectionMatrix();
     }
