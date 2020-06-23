@@ -13,6 +13,7 @@ import {enableViconMarkers} from "./BoneScene_ViconMarkers.js";
 import {addCommonMarkerFields} from "./BoneScene_MarkerCommon.js";
 import {enableNoSTAMarkers} from "./BoneScene_NoSTAMarkers.js";
 import {enableViconMarkerTraces} from "./BoneScene_ViconMarkerTraces.js";
+import {enableNoSTAMarkerTraces} from "./BoneScene_NoSTAMarkerTraces.js";
 
 let animationHelper;
 let boneScene;
@@ -66,6 +67,7 @@ Promise.all([humerusLoader, scapulaLoader, landmarkInit, staticCsvInit, timeSeri
     enableViconMarkers(boneScene);
     enableNoSTAMarkers(boneScene);
     enableViconMarkerTraces(boneScene);
+    enableNoSTAMarkerTraces(boneScene);
     boneScene.initScene();
     boneScene.createSceneGraph();
     boneScene.repositionSceneGraphs();
