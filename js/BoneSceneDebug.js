@@ -9,8 +9,9 @@ export class BoneSceneDebug extends BoneScene{
     static DEBUG_VIEW_COLOR = 0x74c28a;
     static HELPER_VISIBLE = 'HelperVisible';
 
-    constructor(canvas, mainView, debugView, analysisGuiElement, sceneGuiElement, debugGuiElement, statsElement, loadedSTLs, landmarksInfo, staticInfo, timeSeriesInfo) {
-        super(canvas, mainView, analysisGuiElement, sceneGuiElement, loadedSTLs, landmarksInfo, staticInfo, timeSeriesInfo);
+    constructor(containerView, renderer, mainView, debugView, analysisGuiElement, sceneGuiElement, debugGuiElement, statsElement, landmarksInfo, staticInfo, timeSeriesInfo, humerusGeometry, scapulaGeometry) {
+        super(renderer, mainView, analysisGuiElement, sceneGuiElement, landmarksInfo, staticInfo, timeSeriesInfo, humerusGeometry, scapulaGeometry);
+        this.containerView = containerView;
         this.debugView = debugView;
         this.debugGuiElement = debugGuiElement;
         this.sceneHelpers = {};
@@ -23,6 +24,10 @@ export class BoneSceneDebug extends BoneScene{
         return SceneHelpers.divGeometry(this.debugView);
     }
 
+    get containerViewGeometry() {
+        return SceneHelpers.divGeometry(this.containerView);
+    }
+
     addSTLsToScene() {
         super.addSTLsToScene();
         this.sceneHelpers.humerusBoundingBox = new THREE.BoxHelper(this.humerus, 0xffffff);
@@ -32,7 +37,6 @@ export class BoneSceneDebug extends BoneScene{
     }
 
     renderSceneGraph() {
-        this.resizeRendererToDisplaySize();
         this.renderer.setScissorTest(true);
         this.renderMainView();
         this.renderDebugView();
@@ -40,48 +44,40 @@ export class BoneSceneDebug extends BoneScene{
     }
 
     renderMainView() {
-        const {contentLeft: left, contentTop: top, contentWidth: width, contentHeight: height, aspectRatio} = this.viewGeometry;
-        BoneSceneDebug.RED_LINE_MATERIAL.resolution.set(width, height);
-        BoneSceneDebug.GREEN_LINE_MATERIAL.resolution.set(width, height);
-        BoneSceneDebug.BLUE_LINE_MATERIAL.resolution.set(width, height);
-        BoneSceneDebug.YELLOW_LINE_MATERIAL.resolution.set(width, height);
-        BoneSceneDebug.BLACK_LINE_MATERIAL.resolution.set(width, height);
-        BoneSceneDebug.RED_NOSTA_LINE_MATERIAL.resolution.set(width, height);
-        BoneSceneDebug.GREEN_NOSTA_LINE_MATERIAL.resolution.set(width, height);
-        BoneSceneDebug.BLUE_NOSTA_LINE_MATERIAL.resolution.set(width, height);
-        BoneSceneDebug.YELLOW_NOSTA_LINE_MATERIAL.resolution.set(width, height);
+        const {contentLeft: left, contentTop: top, contentWidth: width, contentHeight: height} = this.viewGeometry;
         this.renderer.setScissor(left, top, width, height);
         this.renderer.setViewport(left, top, width, height);
-        this.camera.aspect = aspectRatio;
-        this.camera.updateProjectionMatrix();
-        this.sceneHelpers.mainCameraHelper.update();
         this.debugHelperVisibility(false);
         this.scene.background.set(BoneScene.MAIN_VIEW_COLOR);
         this.controls.update();
+        this.dispatchEvent({type: 'preRender', contentWidth: width, contentHeight: height});
         this.renderer.render(this.scene, this.camera);
     }
 
     renderDebugView() {
-        const {contentLeft: left, contentTop: top, contentWidth: width, contentHeight: height, aspectRatio} = this.debugViewGeometry;
-        BoneSceneDebug.RED_LINE_MATERIAL.resolution.set(width, height);
-        BoneSceneDebug.GREEN_LINE_MATERIAL.resolution.set(width, height);
-        BoneSceneDebug.BLUE_LINE_MATERIAL.resolution.set(width, height);
-        BoneSceneDebug.YELLOW_LINE_MATERIAL.resolution.set(width, height);
-        BoneSceneDebug.BLACK_LINE_MATERIAL.resolution.set(width, height);
-        BoneSceneDebug.RED_NOSTA_LINE_MATERIAL.resolution.set(width, height);
-        BoneSceneDebug.GREEN_NOSTA_LINE_MATERIAL.resolution.set(width, height);
-        BoneSceneDebug.BLUE_NOSTA_LINE_MATERIAL.resolution.set(width, height);
-        BoneSceneDebug.YELLOW_NOSTA_LINE_MATERIAL.resolution.set(width, height);
+        const {contentLeft: left, contentTop: top, contentWidth: width, contentHeight: height} = this.debugViewGeometry;
         this.renderer.setScissor(left, top, width, height);
         this.renderer.setViewport(left, top, width, height);
-        this.debugCamera.aspect = aspectRatio;
-        this.debugCamera.updateProjectionMatrix();
         this.debugHelperVisibility(true);
         this.sceneHelpers.humerusBoundingBox.update();
         this.sceneHelpers.scapulaBoundingBox.update();
         this.scene.background.set(BoneSceneDebug.DEBUG_VIEW_COLOR);
         this.debugControls.update();
+        this.dispatchEvent({type: 'preRender', contentWidth: width, contentHeight: height});
         this.renderer.render(this.scene, this.debugCamera);
+    }
+
+    resizeScene() {
+        const {contentWidth, contentHeight} = this.containerViewGeometry;
+        this.renderer.setSize(contentWidth, contentHeight);
+
+        const {aspectRatio: aspectRatioMain} = this.viewGeometry;
+        this.camera.aspect = aspectRatioMain;
+        this.camera.updateProjectionMatrix();
+
+        const {aspectRatio: aspectRatioDebug} = this.viewGeometry;
+        this.debugCamera.aspect = aspectRatioMain;
+        this.debugCamera.updateProjectionMatrix();
     }
 
     createHelperVisibilitySymbol() {
@@ -149,7 +145,7 @@ export class BoneSceneDebug extends BoneScene{
     }
 
     createSceneAxesHelper() {
-        this.sceneHelpers.sceneAxesHelper = new THREE.AxesHelper(50);
+        this.sceneHelpers.sceneAxesHelper = new THREE.AxesHelper(this.humerusLength);
         this.scene.add(this.sceneHelpers.sceneAxesHelper);
     }
 
@@ -197,36 +193,36 @@ export class BoneSceneDebug extends BoneScene{
         this.debugControls.update();
     }
 
-    repositionCamera() {
-        super.repositionCamera();
+    repositionCamera(scenePosHelper) {
+        super.repositionCamera(scenePosHelper);
         this.sceneHelpers.mainCameraHelper.update();
         this.repositionDebugCamera();
     }
 
-    repositionControls() {
-        super.repositionControls();
+    repositionControls(scenePosHelper) {
+        super.repositionControls(scenePosHelper);
         this.repositionDebugControls();
     }
 
-    repositionHemisphereLight() {
-        super.repositionHemisphereLight();
+    repositionHemisphereLight(scenePosHelper) {
+        super.repositionHemisphereLight(scenePosHelper);
         this.sceneHelpers.hemisphereLightHelper.update();
     }
 
-    repositionDirectionalLight() {
-        super.repositionDirectionalLight();
+    repositionDirectionalLight(scenePosHelper) {
+        super.repositionDirectionalLight(scenePosHelper);
         this.sceneHelpers.directionalLightHelper.updateMatrixWorld();
         this.sceneHelpers.directionalLightHelper.update();
         this.sceneHelpers.directionalLightCameraHelper.update();
     }
 
-    repositionSpotlightAbove() {
-        super.repositionSpotlightAbove();
+    repositionSpotlightAbove(scenePosHelper) {
+        super.repositionSpotlightAbove(scenePosHelper);
         this.sceneHelpers.spotLightAboveHelper.update();
     }
 
-    repositionSpotlightBelow() {
-        super.repositionSpotlightBelow();
+    repositionSpotlightBelow(scenePosHelper) {
+        super.repositionSpotlightBelow(scenePosHelper);
         this.sceneHelpers.spotLightBelowHelper.update();
     }
 
