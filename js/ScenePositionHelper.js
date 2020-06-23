@@ -13,5 +13,6 @@ export class ScenePositionHelper {
         this.gc = new Vector3().copy(this.landmarksInfo_Segment.scapula.gc).applyMatrix4(this.scapula.matrixWorld);
         this.ia = new Vector3().copy(this.landmarksInfo_Segment.scapula.ia).applyMatrix4(this.scapula.matrixWorld);
         this.ts = new Vector3().copy(this.landmarksInfo_Segment.scapula.ts).applyMatrix4(this.scapula.matrixWorld);
+        this.pla = new Vector3().copy(this.landmarksInfo_Segment.scapula.pla).applyMatrix4(this.scapula.matrixWorld);
     }
 }

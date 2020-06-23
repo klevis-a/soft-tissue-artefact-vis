@@ -275,7 +275,7 @@ export class BoneScene {
         this.directionalLight.shadow.camera.bottom = -1 * this.humerusLength;
         this.directionalLight.shadow.camera.top = this.humerusLength;
         this.directionalLight.shadow.camera.near = 0;
-        this.directionalLight.shadow.camera.far = 4 * this.humerusLength;
+        this.directionalLight.shadow.camera.far = 6 * this.humerusLength;
         this.directionalLight.shadow.camera.updateProjectionMatrix();
     }
 
@@ -290,7 +290,7 @@ export class BoneScene {
     }
 
     createSpotlightBelow() {
-        this.spotLightBelow = new SpotLight(0xffffff, 0.5, 0, Math.PI / 8, 1, 1);
+        this.spotLightBelow = new SpotLight(0xffffff, 0.5, 0, Math.PI / 4, 1, 1);
         this.spotLightBelow.visible = false;
         this.spotLightBelow.castShadow = true;
         this.scene.add(this.spotLightBelow);
@@ -301,10 +301,10 @@ export class BoneScene {
         const ia = scenePosHelper.ia;
         const hhc = scenePosHelper.hhc;
         this.camera.near = this._mainCameraDistance / 10;
-        this.camera.far = this._mainCameraDistance * 10;
+        this.camera.far = this._mainCameraDistance * 5;
         this.camera.position.addVectors(new Vector3().addVectors(ia, hhc).multiplyScalar(0.5),
-            new Vector3().copy(this.frontVector).multiplyScalar(this._mainCameraDistance).multiplyScalar(-1))
-            .add(new Vector3().copy(this.staticInfo.upVector()).multiplyScalar(this.humerusLength * 0.1));
+            new Vector3().copy(this.frontVector).multiplyScalar(this._mainCameraDistance).multiplyScalar(-1.5))
+            .add(new Vector3().copy(this.staticInfo.upVector()).multiplyScalar(this.humerusLength * 0.3));
         this.camera.up.copy(this.staticInfo.upVector());
         this.camera.updateProjectionMatrix();
     }
@@ -348,9 +348,10 @@ export class BoneScene {
         const me = scenePosHelper.me;
         const ia = scenePosHelper.ia;
         const ts = scenePosHelper.ts;
+        const pla = scenePosHelper.pla;
         this.spotLightAbove.position.addVectors(hhc, new Vector3().subVectors(hhc, me))
-            .add(new Vector3().subVectors(ts, ia).multiplyScalar(2));
-        this.spotLightAbove.distance = this.humerusLength;
+            .add(new Vector3().subVectors(pla, ts));
+        this.spotLightAbove.distance = this.humerusLength * 2;
         this.spotLightAbove.updateMatrixWorld();
         this.spotLightAbove.target.position.copy(ia);
         this.spotLightAbove.target.updateMatrixWorld();
@@ -359,12 +360,12 @@ export class BoneScene {
     repositionSpotlightBelow(scenePosHelper) {
         const hhc = scenePosHelper.hhc;
         const me = scenePosHelper.me;
-        const ia = scenePosHelper.ia;
         const ts = scenePosHelper.ts;
-        this.spotLightBelow.position.addVectors(me, new Vector3().subVectors(me, hhc)).add(new Vector3().subVectors(ia, ts).multiplyScalar(2));
-        this.spotLightBelow.distance = this.humerusLength;
+        const pla = scenePosHelper.pla;
+        this.spotLightBelow.position.addVectors(me, new Vector3().subVectors(me, hhc).multiplyScalar(0.2)).add(new Vector3().subVectors(ts, pla));
+        this.spotLightBelow.distance = this.humerusLength * 2;
         this.spotLightBelow.updateMatrixWorld();
-        this.spotLightBelow.target.position.copy(ia);
+        this.spotLightBelow.target.position.copy(hhc);
         this.spotLightBelow.target.updateMatrixWorld();
     }
 

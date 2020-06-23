@@ -76,7 +76,7 @@ export class BoneSceneDebug extends BoneScene{
         this.camera.updateProjectionMatrix();
 
         const {aspectRatio: aspectRatioDebug} = this.viewGeometry;
-        this.debugCamera.aspect = aspectRatioMain;
+        this.debugCamera.aspect = aspectRatioDebug;
         this.debugCamera.updateProjectionMatrix();
     }
 
@@ -182,7 +182,8 @@ export class BoneSceneDebug extends BoneScene{
 
     repositionDebugCamera() {
         this.debugCamera.position.addVectors(this.grid.position,
-            new THREE.Vector3().copy(this.frontVector).multiplyScalar(this._mainCameraDistance).multiplyScalar(-1));
+            new THREE.Vector3().copy(this.frontVector).multiplyScalar(this._mainCameraDistance).multiplyScalar(-3))
+            .add(new THREE.Vector3().copy(this.staticInfo.upVector()).multiplyScalar(this.humerusLength*2));
         this.debugCamera.up.copy(this.staticInfo.upVector());
         this.debugCamera.updateProjectionMatrix();
     }
