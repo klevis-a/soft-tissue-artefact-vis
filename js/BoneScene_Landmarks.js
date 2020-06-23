@@ -1,4 +1,4 @@
-import {MeshPhongMaterial, Mesh, SphereBufferGeometry} from "./vendor/three.js/build/three.module.js";
+import {Mesh, SphereBufferGeometry} from "./vendor/three.js/build/three.module.js";
 
 export function landmarks_decorator(BoneSceneFnc) {
     BoneSceneFnc.LANDMARK_GEOMETRY = new SphereBufferGeometry(3.5, 10, 10);

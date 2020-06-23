@@ -95,7 +95,7 @@ export function addViconMarkers(boneScene) {
         const interpFactor = event.interpFactor;
         const scene = event.target;
 
-        if (interpFactor) {
+        if (interpFactor != null) {
             for (const segmentName in scene.viconMarkers) {
                 const currentSegment = scene.viconMarkers[segmentName];
                 for (const markerName in currentSegment) {

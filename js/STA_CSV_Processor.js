@@ -1,4 +1,4 @@
-import * as THREE from "./vendor/three.js/build/three.module.js";
+import {Vector3, Quaternion} from "./vendor/three.js/build/three.module.js";
 
 export class LandmarksInfo {
     static HUMERUS_COLS = [3, 6];
@@ -19,15 +19,15 @@ export class LandmarksInfo {
         this.humerus = {};
         this.scapula = {};
 
-        this.humerus.hhc = new THREE.Vector3(...this.LandmarksData[LandmarksInfo.HUMERUS_HHC.row].slice(...LandmarksInfo.HUMERUS_HHC.col));
-        this.humerus.le = new THREE.Vector3(...this.LandmarksData[LandmarksInfo.HUMERUS_LE.row].slice(...LandmarksInfo.HUMERUS_LE.col));
-        this.humerus.me = new THREE.Vector3(...this.LandmarksData[LandmarksInfo.HUMERUS_ME.row].slice(...LandmarksInfo.HUMERUS_ME.col));
+        this.humerus.hhc = new Vector3(...this.LandmarksData[LandmarksInfo.HUMERUS_HHC.row].slice(...LandmarksInfo.HUMERUS_HHC.col));
+        this.humerus.le = new Vector3(...this.LandmarksData[LandmarksInfo.HUMERUS_LE.row].slice(...LandmarksInfo.HUMERUS_LE.col));
+        this.humerus.me = new Vector3(...this.LandmarksData[LandmarksInfo.HUMERUS_ME.row].slice(...LandmarksInfo.HUMERUS_ME.col));
 
-        this.scapula.gc = new THREE.Vector3(...this.LandmarksData[LandmarksInfo.SCAPULA_GC.row].slice(...LandmarksInfo.SCAPULA_GC.col));
-        this.scapula.ia = new THREE.Vector3(...this.LandmarksData[LandmarksInfo.SCAPULA_IA.row].slice(...LandmarksInfo.SCAPULA_IA.col));
-        this.scapula.ts = new THREE.Vector3(...this.LandmarksData[LandmarksInfo.SCAPULA_TS.row].slice(...LandmarksInfo.SCAPULA_TS.col));
-        this.scapula.pla = new THREE.Vector3(...this.LandmarksData[LandmarksInfo.SCAPULA_PLA.row].slice(...LandmarksInfo.SCAPULA_PLA.col));
-        this.scapula.ac = new THREE.Vector3(...this.LandmarksData[LandmarksInfo.SCAPULA_AC.row].slice(...LandmarksInfo.SCAPULA_AC.col));
+        this.scapula.gc = new Vector3(...this.LandmarksData[LandmarksInfo.SCAPULA_GC.row].slice(...LandmarksInfo.SCAPULA_GC.col));
+        this.scapula.ia = new Vector3(...this.LandmarksData[LandmarksInfo.SCAPULA_IA.row].slice(...LandmarksInfo.SCAPULA_IA.col));
+        this.scapula.ts = new Vector3(...this.LandmarksData[LandmarksInfo.SCAPULA_TS.row].slice(...LandmarksInfo.SCAPULA_TS.col));
+        this.scapula.pla = new Vector3(...this.LandmarksData[LandmarksInfo.SCAPULA_PLA.row].slice(...LandmarksInfo.SCAPULA_PLA.col));
+        this.scapula.ac = new Vector3(...this.LandmarksData[LandmarksInfo.SCAPULA_AC.row].slice(...LandmarksInfo.SCAPULA_AC.col));
     }
 }
 
@@ -45,7 +45,7 @@ export class StaticSTAInfo {
     }
 
     upVector() {
-        return new THREE.Vector3(...this.up());
+        return new Vector3(...this.up());
     }
 
     markerPos(markerName) {
@@ -53,7 +53,7 @@ export class StaticSTAInfo {
     }
 
     markerPosVector(markerName) {
-        return new THREE.Vector3(...this.markerPos(markerName));
+        return new Vector3(...this.markerPos(markerName));
     }
 }
 
@@ -123,7 +123,7 @@ export class TimeSeriesSTAInfo {
         const markerPos = this.markerPos(markerName, frameNum);
         const markerPosNoNaN = markerPos.filter(x => !isNaN(x));
         if (markerPosNoNaN.length == markerPos.length) {
-            return new THREE.Vector3(...markerPos);
+            return new Vector3(...markerPos);
         }
         else {
             return null;
@@ -131,27 +131,27 @@ export class TimeSeriesSTAInfo {
     }
 
     torsoPosVector(frameNum) {
-        return new THREE.Vector3(...this.torsoPos(frameNum));
+        return new Vector3(...this.torsoPos(frameNum));
     }
 
     torsoOrientQuat(frameNum) {
-        return new THREE.Quaternion(...this.torsoOrient(frameNum));
+        return new Quaternion(...this.torsoOrient(frameNum));
     }
 
     scapPosVector(frameNum) {
-        return new THREE.Vector3(...this.scapPos(frameNum));
+        return new Vector3(...this.scapPos(frameNum));
     }
 
     scapOrientQuat(frameNum) {
-        return new THREE.Quaternion(...this.scapOrient(frameNum));
+        return new Quaternion(...this.scapOrient(frameNum));
     }
 
     humPosVector(frameNum) {
-        return new THREE.Vector3(...this.humPos(frameNum));
+        return new Vector3(...this.humPos(frameNum));
     }
 
     humOrientQuat(frameNum) {
-        return new THREE.Quaternion(...this.humOrient(frameNum));
+        return new Quaternion(...this.humOrient(frameNum));
     }
 }
 

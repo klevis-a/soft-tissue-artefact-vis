@@ -148,7 +148,7 @@ export class BoneSceneFnc {
         this._mainCameraDistance = computeCameraDistance(new Vector3(1.5 * this.humerusLength, 0, 0), aspectRatio, fov);
     }
 
-    updateToFrame(frameNum) {
+    updateToFrame(frameNum, sendEvent=true) {
         let currentFrame = Math.floor(frameNum);
         let nextFrame = null;
         let interpFactor = null;
@@ -167,7 +167,9 @@ export class BoneSceneFnc {
             this.humerus.quaternion.copy(this.timeSeriesInfo.humOrientQuat(currentFrame).slerp(this.timeSeriesInfo.humOrientQuat(nextFrame),interpFactor));
             this.scapula.quaternion.copy(this.timeSeriesInfo.scapOrientQuat(currentFrame).slerp(this.timeSeriesInfo.scapOrientQuat(nextFrame),interpFactor));
         }
-        this.dispatchEvent({type: 'frame', currentFrame: currentFrame, nextFrame: nextFrame, interpFactor: interpFactor});
+        if (sendEvent) {
+            this.dispatchEvent({type: 'frame', currentFrame: currentFrame, nextFrame: nextFrame, interpFactor: interpFactor});
+        }
     }
 
     renderSceneGraph() {
@@ -185,7 +187,7 @@ export class BoneSceneFnc {
 
     initScene() {
         this.addSTLsToScene();
-        this.updateToFrame(0);
+        this.updateToFrame(0, false);
         this.computeCameraDistance();
         const scenePosHelper = new ScenePositionHelper(this.humerus, this.scapula, this.landmarksInfo_Segment);
         this.computeThoraxGlobalCS(scenePosHelper);

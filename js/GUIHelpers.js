@@ -1,9 +1,9 @@
 'use strict';
 
-import * as SceneHelpers from './SceneHelpers.js';
+import {updateSpotLight, updateDirectionalLight} from "./SceneHelpers.js";
 
 export function createSpotLightFolder(gui, spotLightName, spotlight, spotlightHelper) {
-    const spotlightUpdater = SceneHelpers.updateSpotLight.bind(null, spotlight, spotlightHelper);
+    const spotlightUpdater = updateSpotLight.bind(null, spotlight, spotlightHelper);
     const spotlightFolder = gui.addFolder(spotLightName);
     spotlightFolder.add(spotlight, 'visible');
     spotlightFolder.add(spotlight, 'intensity', 0, 2);
@@ -19,7 +19,7 @@ export function createSpotLightFolder(gui, spotLightName, spotlight, spotlightHe
 }
 
 export function createDirectionalLightFolder(gui, directionalLightName, directionalLight, directionalLightHelper) {
-    const directionalLightUpdater = SceneHelpers.updateDirectionalLight.bind(null, directionalLight, directionalLightHelper);
+    const directionalLightUpdater = updateDirectionalLight.bind(null, directionalLight, directionalLightHelper);
     const directionalLightFolder = gui.addFolder(directionalLightName);
     directionalLightFolder.add(directionalLight, 'visible');
     directionalLightFolder.add(directionalLight, 'intensity', 0, 2);
