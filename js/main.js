@@ -8,13 +8,14 @@ import {BoneSceneFnc} from "./BoneSceneFnc.js";
 import "./BoneScene_MarkerCommon.js";
 import {WebGLRenderer} from "./vendor/three.js/build/three.module.js";
 import {divGeometry} from "./SceneHelpers.js";
+import {addCommonMarkerFields, enableMarkerGUI} from "./BoneScene_MarkerCommon.js";
 import {enableLandmarks} from "./BoneScene_Landmarks.js";
 import {enableViconMarkers} from "./BoneScene_ViconMarkers.js";
-import {addCommonMarkerFields} from "./BoneScene_MarkerCommon.js";
 import {enableNoSTAMarkers} from "./BoneScene_NoSTAMarkers.js";
+import {enableMarkerTracesGUI} from "./BoneScene_MarkerTracesCommon.js";
 import {enableViconMarkerTraces} from "./BoneScene_ViconMarkerTraces.js";
 import {enableNoSTAMarkerTraces} from "./BoneScene_NoSTAMarkerTraces.js";
-import {enableMarkerClusters} from "./BoneScene_MarkerCluster.js";
+import {enableMarkerClusters, enableMarkerClusterGUI} from "./BoneScene_MarkerCluster.js";
 
 let animationHelper;
 let boneScene;
@@ -70,10 +71,13 @@ Promise.all([humerusLoader, scapulaLoader, landmarkInit, staticCsvInit, timeSeri
     enableViconMarkerTraces(boneScene);
     enableNoSTAMarkerTraces(boneScene);
     enableMarkerClusters(boneScene);
+    enableMarkerGUI(boneScene);
+    enableMarkerTracesGUI(boneScene);
+    enableMarkerClusterGUI(boneScene);
     boneScene.initScene();
     boneScene.createSceneGraph();
     boneScene.repositionSceneGraphs();
-    //boneScene.createGUI();
+    boneScene.createGUI();
     animationHelper = new AnimationHelper(boneScene, timeSeriesInfo.NumFrames, playBtn, timeline, frameNumLbl);
 
     window.addEventListener('resize', () => boneScene.resizeScene());

@@ -90,3 +90,16 @@ export function enableMarkerClusters(boneScene) {
         scene.BLACK_LINE_MATERIAL.resolution.set(contentWidth, contentHeight);
     });
 }
+
+export function enableMarkerClusterGUI(boneScene) {
+    boneScene.addEventListener('gui', function (event) {
+        const scene = event.target;
+        const gui = event.gui;
+
+        const markerClustersFolder = gui.addFolder('Marker Clusters');
+        markerClustersFolder.add(scene.humerusClusterNoSTA,'visible').name('No STA Humerus Cluster');
+        markerClustersFolder.add(scene.humerusCluster,'visible').name('Humerus Cluster');
+        markerClustersFolder.add(scene.scapulaClusterNoSTA,'visible').name('No STA Scapula Cluster');
+        markerClustersFolder.add(scene.scapulaCluster,'visible').name('Scapula Cluster');
+    });
+}

@@ -4,6 +4,8 @@ import {divGeometry, computeCameraDistance} from "./SceneHelpers.js";
 import SVD from "./vendor/svd.js";
 import {TrackballControls} from "./vendor/three.js/examples/jsm/controls/TrackballControls.js";
 import {ScenePositionHelper} from "./ScenePositionHelper.js";
+import {GUI} from "./vendor/three.js/examples/jsm/libs/dat.gui.module.js";
+import {createSpotLightFolder, createDirectionalLightFolder, createHemisphereLightFolder} from "./GUIHelpers.js";
 
 export class BoneSceneFnc {
     static BONE_COLOR = 0xe3dac9;
@@ -364,6 +366,21 @@ export class BoneSceneFnc {
         this.spotLightBelow.updateMatrixWorld();
         this.spotLightBelow.target.position.copy(ia);
         this.spotLightBelow.target.updateMatrixWorld();
+    }
+
+    createGUI(spotLightAboveHelper=null, spotLightBelowHelper=null, directionalLightHelper=null) {
+        this.sceneGui  = new GUI({resizable : false, name: 'sceneGUI', closeOnTop: true});
+        createSpotLightFolder(this.sceneGui, 'Spotlight Above', this.spotLightAbove, spotLightAboveHelper);
+        createSpotLightFolder(this.sceneGui, 'Spotlight Below', this.spotLightBelow, spotLightBelowHelper);
+        createDirectionalLightFolder(this.sceneGui, 'Directional Light', this.directionalLight, directionalLightHelper);
+        createHemisphereLightFolder(this.sceneGui, 'Hemisphere Light', this.hemisphereLight);
+        this.sceneGuiElement.appendChild(this.sceneGui.domElement);
+        this.sceneGui.close();
+
+        this.analysisGui = new GUI({resizable : false, name: 'analysisGUI', closeOnTop: true});
+        this.dispatchEvent({type: 'gui', gui: this.analysisGui});
+        this.analysisGuiElement.appendChild(this.analysisGui.domElement);
+        this.analysisGui.close();
     }
 }
 

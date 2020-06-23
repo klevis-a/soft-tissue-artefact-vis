@@ -9,6 +9,16 @@ BoneSceneFnc.YELLOW_MARKER_MATERIAL = new MeshPhongMaterial({color: 0xffff00, op
 BoneSceneFnc.GRAY_MARKER_MATERIAL = new MeshPhongMaterial({color: 0x787878});
 BoneSceneFnc.MARKER_GEOMETRY = new SphereBufferGeometry(7, 10, 10);
 
+BoneSceneFnc.segmentFriendNameMap = new Map([
+    ['thorax', 'Thorax'],
+    ['clavicle', 'Clavicle'],
+    ['leftScapula', 'Left Scapula'],
+    ['scapula', 'Right Scapula'],
+    ['humerus', 'Upper Arm'],
+    ['rightForearmWrist', 'Forearm/Wrist'],
+    ['rightHand', 'Hand'],
+]);
+
 BoneSceneFnc.createMarker = function(material, position) {
     const mesh = new Mesh(BoneSceneFnc.MARKER_GEOMETRY, material);
     mesh.position.copy(position);
@@ -25,4 +35,26 @@ export function addCommonMarkerFields(boneScene) {
         'rightForearmWrist': false,
         'rightHand': false
     };
+}
+
+export function enableMarkerGUI(boneScene) {
+    boneScene.addEventListener('gui', function (event) {
+        const scene = event.target;
+        const gui = event.gui;
+
+        const viconMarkerFolder = gui.addFolder('Vicon Marker Visibility');
+        for (const segmentName in scene.markerSegmentVisibility) {
+            viconMarkerFolder.add(scene.markerSegmentVisibility, segmentName).name(BoneSceneFnc.segmentFriendNameMap.get(segmentName)).onChange(() => {
+                const currentSegment = scene.viconMarkers[segmentName];
+                for (const markerName in currentSegment) {
+                    currentSegment[markerName].visible = scene.markerSegmentVisibility[segmentName];
+                }
+
+                const currentSegmentNoSTA = this.noSTAMarkers[segmentName];
+                for (const markerName in currentSegmentNoSTA) {
+                    currentSegmentNoSTA[markerName].visible = scene.markerSegmentVisibility[segmentName];
+                }
+            });
+        }
+    });
 }
