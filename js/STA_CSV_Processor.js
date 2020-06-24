@@ -146,6 +146,35 @@ export class TimeSeriesSTAInfo {
     }
 }
 
+export class BasisVectorsInfo {
+    static Mode_Indices = new Map([
+        ['TRANS', 0],
+        ['ROT', 1],
+        ['STRETCH', 2],
+        ['SHEAR', 3],
+    ]);
+
+    static DimNames = ['X','Y','Z'];
+    static HumerusMarkerOrder = ['RUPAA','RUPAB','RUPAC','RUPAD'];
+    static ScapulaMarkerOrder =['RSH0','RACRM','RSPIN','RANGL'];
+
+    constructor(csvResults,markerOrder) {
+        this.BasisVectorsRaw = csvResults.data.slice(1);
+        this.BasisVectors = new Map();
+        BasisVectorsInfo.Mode_Indices.forEach((modeIdx,mode) => {
+            const modeDimArray = [];
+            for(let i=0;i<3; i++) {
+                const modeDimMap = new Map();
+                markerOrder.forEach((markerName, markerIdx) => {
+                    modeDimMap.set(markerName, new Vector3(...this.BasisVectorsRaw[markerIdx*12+modeIdx*3+i]));
+                });
+                modeDimArray.push(modeDimMap);
+            }
+            this.BasisVectors.set(mode, modeDimArray);
+        });
+    }
+}
+
 function processMarkerData(map, fields, startIdx) {
     const markerFields = fields.slice(startIdx);
 
