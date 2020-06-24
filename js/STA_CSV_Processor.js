@@ -1,4 +1,5 @@
 import {Vector3, Quaternion} from "./vendor/three.js/build/three.module.js";
+import {range} from "./JSHelpers.js";
 
 export class LandmarksInfo {
     static HUMERUS_COLS = [3, 6];
@@ -49,37 +50,43 @@ export class StaticSTAInfo {
 }
 
 export class TimeSeriesSTAInfo {
-    static get FRAME_PERIOD() {
-        return 10;
-    }
-
-    static get TORSO_POS() {
-        return [0, 3];
-    }
-
-    static get TORSO_ORIENT() {
-        return [3, 7];
-    }
-
-    static get SCAP_POS() {
-        return [7, 10];
-    }
-
-    static get SCAP_ORIENT() {
-        return [10, 14];
-    }
-    static get HUM_POS() {
-        return [14, 17];
-    }
-    static get HUM_ORIENT() {
-        return [17, 21];
-    }
+    static FRAME_PERIOD = 10;
+    static TORSO_POS = [0, 3];
+    static TORSO_ORIENT = [3, 7];
+    static SCAP_POS = [7, 10];
+    static SCAP_ORIENT = [10, 14];
+    static HUM_POS = [14, 17];
+    static HUM_ORIENT = [17, 21];
 
     constructor(csvResults) {
         this.TimeSeries = csvResults.data.slice(1);
         this.NumFrames = this.TimeSeries.length;
         this.Markers = new Map();
         processMarkerData(this.Markers, csvResults.data[0], 14);
+
+        const framesArray = range(this.NumFrames);
+        this.TorsoPos = framesArray.map(frameNum => new Vector3(...this.torsoPos(frameNum)));
+        this.TorsoOrient = framesArray.map(frameNum => new Quaternion(...this.torsoOrient(frameNum)));
+        this.ScapulaPos = framesArray.map(frameNum => new Vector3(...this.scapPos(frameNum)));
+        this.ScapulaOrient = framesArray.map(frameNum => new Quaternion(...this.scapOrient(frameNum)));
+        this.HumerusPos = framesArray.map(frameNum => new Vector3(...this.humPos(frameNum)));
+        this.HumerusOrient = framesArray.map(frameNum => new Quaternion(...this.humOrient(frameNum)));
+
+
+        this.MarkerPos = new Map();
+        this.Markers.forEach((markerIdx, markerName) => {
+            const posForMarker = framesArray.map(frameNum => {
+                const markerPos = this.markerPos(markerName, frameNum);
+                const markerPosNoNaN = markerPos.filter(x => !isNaN(x));
+                if (markerPosNoNaN.length === markerPos.length) {
+                    return new Vector3(...markerPos);
+                }
+                else {
+                    return null;
+                }
+            }, this);
+            this.MarkerPos.set(markerName, posForMarker);
+        }, this);
     }
 
     markerPos(markerName, frameNum) {
@@ -111,38 +118,31 @@ export class TimeSeriesSTAInfo {
     }
 
     markerPosVector(markerName, frameNum) {
-        const markerPos = this.markerPos(markerName, frameNum);
-        const markerPosNoNaN = markerPos.filter(x => !isNaN(x));
-        if (markerPosNoNaN.length == markerPos.length) {
-            return new Vector3(...markerPos);
-        }
-        else {
-            return null;
-        }
+        return this.MarkerPos.get(markerName)[frameNum];
     }
 
     torsoPosVector(frameNum) {
-        return new Vector3(...this.torsoPos(frameNum));
+        return this.TorsoPos[frameNum];
     }
 
     torsoOrientQuat(frameNum) {
-        return new Quaternion(...this.torsoOrient(frameNum));
+        return this.TorsoOrient[frameNum];
     }
 
     scapPosVector(frameNum) {
-        return new Vector3(...this.scapPos(frameNum));
+        return this.ScapulaPos[frameNum];
     }
 
     scapOrientQuat(frameNum) {
-        return new Quaternion(...this.scapOrient(frameNum));
+        return this.ScapulaOrient[frameNum];
     }
 
     humPosVector(frameNum) {
-        return new Vector3(...this.humPos(frameNum));
+        return this.HumerusPos[frameNum];
     }
 
     humOrientQuat(frameNum) {
-        return new Quaternion(...this.humOrient(frameNum));
+        return this.HumerusOrient[frameNum];
     }
 }
 

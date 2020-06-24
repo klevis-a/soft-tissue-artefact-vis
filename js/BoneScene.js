@@ -107,11 +107,11 @@ export class BoneScene {
     }
 
     computeThoraxGlobalCS(scenePosHelper){
-        const t10 = this.timeSeriesInfo.markerPosVector('T10', 0);
-        const t5 = this.timeSeriesInfo.markerPosVector('T5', 0);
-        const c7 = this.timeSeriesInfo.markerPosVector('C7', 0);
-        const strn = this.timeSeriesInfo.markerPosVector('STRN', 0);
-        const clav = this.timeSeriesInfo.markerPosVector('CLAV', 0);
+        const t10 = new Vector3().copy(this.timeSeriesInfo.markerPosVector('T10', 0));
+        const t5 = new Vector3().copy(this.timeSeriesInfo.markerPosVector('T5', 0));
+        const c7 = new Vector3().copy(this.timeSeriesInfo.markerPosVector('C7', 0));
+        const strn = new Vector3().copy(this.timeSeriesInfo.markerPosVector('STRN', 0));
+        const clav = new Vector3().copy(this.timeSeriesInfo.markerPosVector('CLAV', 0));
         const thoraxMarkers = [t10, t5, c7, strn, clav];
 
         const presentMarkers = thoraxMarkers.filter(x => x!==null);
