@@ -183,8 +183,8 @@ export class BoneSceneDebug extends BoneScene{
     repositionDebugCamera() {
         this.debugCamera.position.addVectors(this.grid.position,
             new Vector3().copy(this.frontVector).multiplyScalar(this._mainCameraDistance).multiplyScalar(-3))
-            .add(new Vector3().copy(this.staticInfo.upVector()).multiplyScalar(this.humerusLength*2));
-        this.debugCamera.up.copy(this.staticInfo.upVector());
+            .add(new Vector3().copy(this.staticInfo.upVector).multiplyScalar(this.humerusLength*2));
+        this.debugCamera.up.copy(this.staticInfo.upVector);
         this.debugCamera.updateProjectionMatrix();
     }
 

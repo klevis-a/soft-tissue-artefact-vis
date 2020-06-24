@@ -134,7 +134,7 @@ export class BoneScene {
         const ts = scenePosHelper.ts;
         const gc = scenePosHelper.gc;
         if (new Vector3().copy(this.lateralVector).dot(gc.sub(ts)) < 0)  this.lateralVector.multiplyScalar(-1);
-        this.frontVector = new Vector3().crossVectors(this.staticInfo.upVector(), this.lateralVector);
+        this.frontVector = new Vector3().crossVectors(this.staticInfo.upVector, this.lateralVector);
     }
 
     computeHumerusLength() {
@@ -304,8 +304,8 @@ export class BoneScene {
         this.camera.far = this._mainCameraDistance * 5;
         this.camera.position.addVectors(new Vector3().addVectors(ia, hhc).multiplyScalar(0.5),
             new Vector3().copy(this.frontVector).multiplyScalar(this._mainCameraDistance).multiplyScalar(-1.5))
-            .add(new Vector3().copy(this.staticInfo.upVector()).multiplyScalar(this.humerusLength * 0.3));
-        this.camera.up.copy(this.staticInfo.upVector());
+            .add(new Vector3().copy(this.staticInfo.upVector).multiplyScalar(this.humerusLength * 0.3));
+        this.camera.up.copy(this.staticInfo.upVector);
         this.camera.updateProjectionMatrix();
     }
 
@@ -319,24 +319,24 @@ export class BoneScene {
 
     repositionGrid(scenePosHelper) {
         const me = scenePosHelper.me;
-        this.shadowPlane.lookAt(this.shadowPlane.getWorldPosition(new Vector3()).add(this.staticInfo.upVector()));
-        this.shadowPlane.position.addVectors(me, new Vector3().copy(this.staticInfo.upVector()).multiplyScalar(0.5 * this.humerusLength).multiplyScalar(-1));
+        this.shadowPlane.lookAt(this.shadowPlane.getWorldPosition(new Vector3()).add(this.staticInfo.upVector));
+        this.shadowPlane.position.addVectors(me, new Vector3().copy(this.staticInfo.upVector).multiplyScalar(0.5 * this.humerusLength).multiplyScalar(-1));
 
-        this.grid.lookAt(this.grid.getWorldPosition(new Vector3()).add(this.staticInfo.upVector()));
-        this.grid.position.addVectors(me, new Vector3().copy(this.staticInfo.upVector()).multiplyScalar(0.5 * this.humerusLength).multiplyScalar(-1))
-            .add(new Vector3().copy(this.staticInfo.upVector()).multiplyScalar(-1).multiplyScalar(2));
+        this.grid.lookAt(this.grid.getWorldPosition(new Vector3()).add(this.staticInfo.upVector));
+        this.grid.position.addVectors(me, new Vector3().copy(this.staticInfo.upVector).multiplyScalar(0.5 * this.humerusLength).multiplyScalar(-1))
+            .add(new Vector3().copy(this.staticInfo.upVector).multiplyScalar(-1).multiplyScalar(2));
         this.grid.updateMatrixWorld();
     }
 
     repositionHemisphereLight() {
-        this.hemisphereLight.position.copy(this.staticInfo.upVector());
+        this.hemisphereLight.position.copy(this.staticInfo.upVector);
         this.hemisphereLight.updateMatrixWorld();
     }
 
     repositionDirectionalLight(scenePosHelper) {
         const hhc = scenePosHelper.hhc;
         const ia = scenePosHelper.ia;
-        this.directionalLight.position.addVectors(hhc, new Vector3().copy(this.staticInfo.upVector()).multiplyScalar(2 * this.humerusLength))
+        this.directionalLight.position.addVectors(hhc, new Vector3().copy(this.staticInfo.upVector).multiplyScalar(2 * this.humerusLength))
             .add(new Vector3().copy(this.lateralVector).multiplyScalar(2 * this.humerusLength).multiplyScalar(-1));
         this.directionalLight.target.position.copy(ia);
         this.directionalLight.updateMatrixWorld();

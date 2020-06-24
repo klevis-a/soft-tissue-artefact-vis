@@ -38,22 +38,13 @@ export class StaticSTAInfo {
         this.StaticData = csvResults.data[1];
         this.Markers = new Map();
         processMarkerData(this.Markers, csvResults.data[0], 3);
-    }
-
-    up() {
-        return this.StaticData.slice(...StaticSTAInfo.UP);
-    }
-
-    upVector() {
-        return new Vector3(...this.up());
-    }
-
-    markerPos(markerName) {
-        return this.StaticData.slice(...this.Markers.get(markerName));
+        this.upVector = new Vector3(...this.StaticData.slice(...StaticSTAInfo.UP));
+        this.MarkerPos = new Map();
+        this.Markers.forEach((markerIdx, markerName) => this.MarkerPos.set(markerName, new Vector3(...this.StaticData.slice(...markerIdx))));
     }
 
     markerPosVector(markerName) {
-        return new Vector3(...this.markerPos(markerName));
+        return this.MarkerPos.get(markerName);
     }
 }
 
