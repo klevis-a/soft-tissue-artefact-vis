@@ -12,6 +12,7 @@ BoneScene.prototype.addSegmentBasisVectors = function(segment) {
             dimBasisVec.forEach((markerBasisVec, marker) => {
                 const arrow = new FatArrow(this.humerusLength/100, this.humerusLength/10, this.humerusLength/100*2, this.humerusLength/100*2, BoneScene.BasicVecDimColorMap[dim]);
                 arrow.setDirection(new Vector3().copy(markerBasisVec).normalize());
+                arrow.visible=false;
                 this.noSTAMarkers[segment][marker].add(arrow);
 
                 if (this.basisVectors[segment][mode] == null) {
@@ -88,7 +89,7 @@ export function enableBasisVectorsGUI(boneScene) {
             BasisVectorsInfo.Mode_Indices.forEach((modeIdx,mode) => {
                 BasisVectorsInfo.DimNames.forEach((dim,dimIdx) => {
                     const propName = mode + '_' + dim;
-                    basisVectorsGUI[propName] = true;
+                    basisVectorsGUI[propName] = false;
                     segmentBasisVectorsFolder.add(basisVectorsGUI, propName).onChange((val) => {
                         for(const marker in scene.basisVectors[segment][mode][dimIdx]) {
                             scene.basisVectors[segment][mode][dimIdx][marker].visible = val;
