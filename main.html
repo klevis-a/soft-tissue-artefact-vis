@@ -10,6 +10,57 @@
 </head>
 <body>
 <div id="topContainer">
+    <div id="help-btn-div"><a href="#" id="help-btn">?</a></div>
+    <div id="help-div">
+        <div id="close-container"><a href="#" class="close" id="help-close-btn"></a></div>
+        <p>
+            <b>Introduction</b>
+            <br/>
+            The purpose of this application is to enable visualization of the soft tissue artefact (STA) of the humerus
+            and scapula. The position and orientation of the humerus and scapula were recorded via biplane fluoroscopy
+            (~1 mm and ~1 deg accuracy). The skin marker positions were recorded using a 10-camera Vicon system.
+        </p>
+
+        <p>
+            <b>Animation Control</b>
+            <br/>
+            The play/pause button and slider bar at the bottom of the page provide control of the animation. The frame
+            number shown to the right of the slider bar corresponds to the bi-plane fluoroscopy frame number.
+        </p>
+
+        <p>
+            <b>Marker Set</b>
+            <br/>
+            The scapula marker cluster is comprised of 4 markers attached to key landmarks on the scapula. The humerus
+            marker cluster is also comprised of 4 markers. These markers are affixed on a rigid plate, which is attached
+            to the humerus using an arm band. For the humerus and scapula marker clusters, each marker is assigned a color
+            (red, green, blue or yellow) and its position is computed using two methods. In the first method
+            (represented by a solid marker) the marker position is derived directly from the Vicon system. In the second
+            method (represented by a mesh marker) the marker position is computed by rigidly attaching the marker to its
+            corresponding segment (humerus or scapula) in the first frame. Therefore, the mesh marker represents the
+            marker position without STA. Grey markers represent markers attached to the torso, forearm, or
+            hand of the subject. The forearm and hand markers are not shown by default. The humerus also has a fifth
+            marker attached to the lateral epicondyle, however this marker is not considered as
+            part of the humerus marker cluster (so it's shown in grey).
+        </p>
+
+        <p>
+            <b>Visualization Aids</b>
+            <br/>
+            The markers within a marker cluster are connected together via solid lines. This aids in visualizing how the
+            entire marker cluster is deforming. In addition, solid and dashed lines - corresponding to solid and mesh
+            markers, respectively - trace the path of each marker throughout the animation.
+        </p>
+
+        <p>
+            <b>Configuration Parameters</b>
+            <br/>
+            In the upper-right hand corner of the application a set of configuration parameters is available. In the
+            first set of configuration parameters (arrived at by selecting the first Open Controls) the marker, trace,
+            and marker cluster visibility can be controlled. The second set of configuration parameters (arrived at by
+            selecting the second Open Controls) provides controls over the lights in the scene.
+        </p>
+    </div>
     <div id="mainView">
         <canvas id="canvas"></canvas>
     </div>

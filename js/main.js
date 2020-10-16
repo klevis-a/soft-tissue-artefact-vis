@@ -90,3 +90,9 @@ Promise.all([humerusLoader, scapulaLoader, landmarkInit, staticCsvInit, timeSeri
     window.addEventListener('resize', () => boneScene.resizeScene());
 });
 
+// close button
+const closeBtn = document.getElementById('help-close-btn');
+const helpDiv = document.getElementById('help-div');
+const helpBtn = document.getElementById('help-btn');
+closeBtn.onclick = () => helpDiv.style.display = "none";
+helpBtn.onclick = () => helpDiv.style.display = "block";
