@@ -22,29 +22,15 @@ BoneScene.prototype.addNoSTAMarkerTrace = function(markerName, segmentName, mate
     if (this.noSTAMarkerTraces.NumSegments[segmentName] === undefined) {
         this.noSTAMarkerTraces.NumSegments[segmentName] = {};
     }
-    let posFnc;
-    let quatFnc;
 
-    if (segmentName==='humerus') {
-        posFnc = (frameNum) => this.timeSeriesInfo.humPosVector(frameNum);
-        quatFnc = (frameNum) => this.timeSeriesInfo.humOrientQuat(frameNum);
-    }
-    else if (segmentName==='scapula') {
-        posFnc = (frameNum) => this.timeSeriesInfo.scapPosVector(frameNum);
-        quatFnc = (frameNum) => this.timeSeriesInfo.scapOrientQuat(frameNum);
-    }
-    else {
-        return;
-    }
-    const markerRelPos = this.staticInfo.markerPosVector(markerName);
+    const markerRelPos = (markerName in this.noSTAMarkers[segmentName]) ? this.noSTAMarkers[segmentName][markerName].position : null;
 
-    this.noSTAMarkerTraces.NumSegments[segmentName][markerName] = new Array(this.timeSeriesInfo.NumFrames);
+    this.noSTAMarkerTraces.NumSegments[segmentName][markerName] = new Array(this.markerTrajectories.NumFrames);
     const positions = [];
     let numSegments = -1;
-    for (let i=0; i<this.timeSeriesInfo.NumFrames; i++) {
-        const segmentPos = posFnc(i);
-        const segmentQuat = quatFnc(i);
-        if (segmentPos !== null && segmentQuat !== null) {
+    for (let i=0; i<this.markerTrajectories.NumFrames; i++) {
+        const [segmentPos, segmentQuat] = this.segmentPose(segmentName, i);
+        if (markerRelPos !== null && segmentPos !== null && segmentQuat !== null) {
             const markerPosition = new Vector3().copy(markerRelPos).applyQuaternion(segmentQuat).add(segmentPos);
             positions.push(markerPosition.x, markerPosition.y, markerPosition.z);
             numSegments++;

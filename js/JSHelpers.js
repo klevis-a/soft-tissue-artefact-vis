@@ -15,3 +15,14 @@ export function loadScript(src) {
         document.head.append(script);
     });
 }
+
+export function loadCsv(url, hasHeader = false) {
+    return new Promise((resolve, reject) => {
+        Papa.parse(url, {
+            download: !(url instanceof File), dynamicTyping: true, skipEmptyLines: true, header: hasHeader,
+            complete: results => {
+                resolve(results)
+            }
+        });
+    });
+}

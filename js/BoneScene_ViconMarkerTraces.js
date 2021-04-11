@@ -21,11 +21,11 @@ BoneScene.prototype.addViconMarkerTrace = function(markerName, segmentName, mate
     if (this.viconMarkerTraces.NumSegments[segmentName] === undefined) {
         this.viconMarkerTraces.NumSegments[segmentName] = {};
     }
-    this.viconMarkerTraces.NumSegments[segmentName][markerName] = new Array(this.timeSeriesInfo.NumFrames);
+    this.viconMarkerTraces.NumSegments[segmentName][markerName] = new Array(this.markerTrajectories.NumFrames);
     const positions = [];
     let numSegments = -1;
-    for (let i=0; i<this.timeSeriesInfo.NumFrames; i++) {
-        const markerPosition = this.timeSeriesInfo.markerPosVector(markerName, i);
+    for (let i=0; i<this.markerTrajectories.NumFrames; i++) {
+        const markerPosition = this.markerTrajectories.markerPosVector(markerName, i);
         if (markerPosition !== null) {
             positions.push(markerPosition.x, markerPosition.y, markerPosition.z);
             numSegments++;

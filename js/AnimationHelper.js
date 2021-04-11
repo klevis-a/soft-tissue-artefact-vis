@@ -1,7 +1,7 @@
 'use strict';
 
 import {TimelineController} from "./TimelineController.js";
-import {TimeSeriesSTAInfo} from "./STA_CSV_Processor.js";
+import {Trajectory} from "./Csv_Processor.js";
 
 export class AnimationHelper {
     constructor(boneScene, numFrames, playBtn, timeline, frameNumLbl) {
@@ -43,7 +43,7 @@ export class AnimationHelper {
     renderAnimate(time) {
         const timeDiff = time - this.StartTime;
         if (timeDiff > 0) {
-            const currentFractionalFrame = (timeDiff/TimeSeriesSTAInfo.FRAME_PERIOD) + this.StartFrame;
+            const currentFractionalFrame = (timeDiff/Trajectory.FRAME_PERIOD) + this.StartFrame;
             const currentFrame = Math.floor(currentFractionalFrame);
             this.BoneScene.updateToFrame(currentFractionalFrame);
 

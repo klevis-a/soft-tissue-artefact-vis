@@ -43,7 +43,7 @@ BoneScene.prototype.addViconMarker = function (name, segmentName, material) {
     if (this.viconMarkers[segmentName] == null) {
         this.viconMarkers[segmentName] = {};
     }
-    const markerPos = this.timeSeriesInfo.markerPosVector(name, 0);
+    const markerPos = this.markerTrajectories.markerPosVector(name, 0);
     if (markerPos == null) {
         this.viconMarkers[segmentName][name] = BoneScene.createMarker(material, new Vector3());
         this.viconMarkers[segmentName][name].visible = false;
@@ -56,7 +56,7 @@ BoneScene.prototype.addViconMarker = function (name, segmentName, material) {
 };
 
 BoneScene.prototype.addViconMarkers = function () {
-    for (const markerName of this.timeSeriesInfo.Markers.keys()) {
+    for (const markerName of this.markerTrajectories.Markers.keys()) {
         const markerMaterial = BoneScene.SegmentMarkerMaterials.get(markerName) || BoneScene.GRAY_MARKER_MATERIAL;
         this.addViconMarker(markerName, BoneScene.MarkerSegmentMap.get(markerName), markerMaterial);
     }
@@ -80,8 +80,8 @@ export function enableViconMarkers(boneScene) {
             for (const segmentName in scene.viconMarkers) {
                 const currentSegment = scene.viconMarkers[segmentName];
                 for (const markerName in currentSegment) {
-                    const markerPosCurrent = scene.timeSeriesInfo.markerPosVector(markerName, currentFrame);
-                    const markerPosNext = scene.timeSeriesInfo.markerPosVector(markerName, nextFrame);
+                    const markerPosCurrent = scene.markerTrajectories.markerPosVector(markerName, currentFrame);
+                    const markerPosNext = scene.markerTrajectories.markerPosVector(markerName, nextFrame);
 
                     if (markerPosCurrent === null) {
                         currentSegment[markerName].visible = false;
@@ -101,7 +101,7 @@ export function enableViconMarkers(boneScene) {
             for (const segmentName in scene.viconMarkers) {
                 const currentSegment = scene.viconMarkers[segmentName];
                 for (const markerName in currentSegment) {
-                    const markerPos = scene.timeSeriesInfo.markerPosVector(markerName, this.timeSeriesInfo.NumFrames-1);
+                    const markerPos = scene.markerTrajectories.markerPosVector(markerName, this.markerTrajectories.NumFrames-1);
                     if (markerPos === null) {
                         currentSegment[markerName].visible = false;
                     }

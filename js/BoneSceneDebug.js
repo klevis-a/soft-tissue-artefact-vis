@@ -9,8 +9,10 @@ export class BoneSceneDebug extends BoneScene{
     static DEBUG_VIEW_COLOR = 0x74c28a;
     static HELPER_VISIBLE = 'HelperVisible';
 
-    constructor(containerView, renderer, mainView, debugView, analysisGuiElement, sceneGuiElement, debugGuiElement, statsElement, landmarksInfo, staticInfo, timeSeriesInfo, humerusGeometry, scapulaGeometry) {
-        super(renderer, mainView, analysisGuiElement, sceneGuiElement, landmarksInfo, staticInfo, timeSeriesInfo, humerusGeometry, scapulaGeometry);
+    constructor(containerView, renderer, mainView, debugView, analysisGuiElement, sceneGuiElement, debugGuiElement, statsElement,
+                humerusLandmarks, scapulaLandmarks, biplaneTrajectory, markerTrajectories, humerusGeometry, scapulaGeometry) {
+        super(renderer, mainView, analysisGuiElement, sceneGuiElement, humerusLandmarks, scapulaLandmarks,
+            biplaneTrajectory, markerTrajectories, humerusGeometry, scapulaGeometry)
         this.containerView = containerView;
         this.debugView = debugView;
         this.debugGuiElement = debugGuiElement;
@@ -98,12 +100,6 @@ export class BoneSceneDebug extends BoneScene{
         this.createHelperVisibilitySymbol();
     }
 
-    repositionSceneGraphs() {
-        super.repositionSceneGraphs();
-        this.repositionDebugCamera();
-        this.repositionDebugControls();
-    }
-
     createMainCameraHelper() {
         this.sceneHelpers.mainCameraHelper = new CameraHelper(this.camera);
         this.scene.add(this.sceneHelpers.mainCameraHelper);
@@ -180,11 +176,12 @@ export class BoneSceneDebug extends BoneScene{
         this.createSpotLightBelowHelper();
     }
 
-    repositionDebugCamera() {
-        this.debugCamera.position.addVectors(this.grid.position,
-            new Vector3().copy(this.frontVector).multiplyScalar(this._mainCameraDistance).multiplyScalar(-3))
-            .add(new Vector3().copy(this.staticInfo.upVector).multiplyScalar(this.humerusLength*2));
-        this.debugCamera.up.copy(this.staticInfo.upVector);
+    repositionDebugCamera(scenePosHelper) {
+        this.debugCamera.position.addVectors(this.humerus.position,
+            new Vector3().copy(scenePosHelper.anterior).multiplyScalar(this._mainCameraDistance).multiplyScalar(-2))
+            .add(new Vector3().copy(this.upVector).multiplyScalar(this.humerusLength*2))
+            .add(new Vector3().copy(scenePosHelper.lateral).multiplyScalar(this.humerusLength*2));
+        this.debugCamera.up.copy(this.upVector);
         this.debugCamera.updateProjectionMatrix();
     }
 
@@ -197,7 +194,7 @@ export class BoneSceneDebug extends BoneScene{
     repositionCamera(scenePosHelper) {
         super.repositionCamera(scenePosHelper);
         this.sceneHelpers.mainCameraHelper.update();
-        this.repositionDebugCamera();
+        this.repositionDebugCamera(scenePosHelper);
     }
 
     repositionControls(scenePosHelper) {

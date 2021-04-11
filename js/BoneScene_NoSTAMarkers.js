@@ -1,5 +1,5 @@
 import {BoneScene} from "./BoneScene.js";
-import {MeshPhongMaterial} from "./vendor/three.js/build/three.module.js";
+import {Matrix4, MeshPhongMaterial, Vector3} from "./vendor/three.js/build/three.module.js";
 
 BoneScene.RED_NOSTA_MARKER_MATERIAL = new MeshPhongMaterial({color: 0xff0000, wireframe: true});
 BoneScene.GREEN_NOSTA_MARKER_MATERIAL = new MeshPhongMaterial({color: 0x00ff00, wireframe: true});
@@ -18,8 +18,20 @@ BoneScene.SegmentNoSTAMarkerMaterials = new Map([
 ]);
 
 BoneScene.prototype.addNoSTAMarker = function(name, segment, material) {
-    this.noSTAMarkers[segment][name] = BoneScene.createMarker(material, this.staticInfo.markerPosVector(name));
-    this[segment].add(this.noSTAMarkers[segment][name]);
+    const firstFrame = this.markerTrajectories.MarkerFirstFrame.get(name);
+    if (firstFrame === -1) {
+        console.log(name + ' not present.')
+    }
+    else if (firstFrame >= 15) {
+        console.log(name + ' not present in the first 15 frames.')
+    }
+    else {
+        const [segmentPos, segmentQuat] = this.segmentPose(segment, firstFrame);
+        const segmentPose = new Matrix4().makeRotationFromQuaternion(segmentQuat).setPosition(segmentPos);
+        const markerInSegment = new Vector3().copy(this.markerTrajectories.markerPosVector(name, firstFrame)).applyMatrix4(segmentPose.getInverse(segmentPose));
+        this.noSTAMarkers[segment][name] = BoneScene.createMarker(material,  markerInSegment);
+        this[segment].add(this.noSTAMarkers[segment][name]);
+    }
 };
 
 BoneScene.prototype.addNoSTAMarkers = function() {
@@ -33,6 +45,18 @@ BoneScene.prototype.addNoSTAMarkers = function() {
     this.addNoSTAMarker('RSPIN', 'scapula', BoneScene.SegmentNoSTAMarkerMaterials.get('RSPIN'));
     this.addNoSTAMarker('RANGL', 'scapula', BoneScene.SegmentNoSTAMarkerMaterials.get('RANGL'));
 };
+
+BoneScene.prototype.segmentPose = function(segmentName, frameNum) {
+    if (segmentName==='humerus') {
+        return  [this.biplaneTrajectory.humPosVector(frameNum), this.biplaneTrajectory.humOrientQuat(frameNum)];
+    }
+    else if (segmentName==='scapula') {
+        return  [this.biplaneTrajectory.scapPosVector(frameNum), this.biplaneTrajectory.scapOrientQuat(frameNum)];
+    }
+    else {
+        return [null, null];
+    }
+}
 
 export function enableNoSTAMarkers(boneScene) {
     boneScene.noSTAMarkers = {};

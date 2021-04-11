@@ -1,8 +1,6 @@
 'use strict';
 
-import {CSVLoader} from "./CSVLoader.js";
 import {AnimationHelper} from "./AnimationHelper.js";
-import {LandmarksInfo, StaticSTAInfo, TimeSeriesSTAInfo, BasisVectorsInfo} from "./STA_CSV_Processor.js";
 import {promiseLoadSTL} from "./MiscThreeHelpers.js";
 import {BoneScene} from "./BoneScene.js";
 import {WebGLRenderer} from "./vendor/three.js/build/three.module.js";
@@ -14,16 +12,12 @@ import {enableNoSTAMarkers} from "./BoneScene_NoSTAMarkers.js";
 import {enableMarkerTracesGUI} from "./BoneScene_MarkerTracesCommon.js";
 import {enableViconMarkerTraces} from "./BoneScene_ViconMarkerTraces.js";
 import {enableNoSTAMarkerTraces} from "./BoneScene_NoSTAMarkerTraces.js";
-import {enableMarkerClusters, enableMarkerClusterGUI} from "./BoneScene_MarkerCluster.js";
+import {enableMarkerClusterGUI, enableMarkerClusters} from "./BoneScene_MarkerCluster.js";
+import {HumerusLandmarks, MarkerTrajectories, ScapulaLandmarks, Trajectory} from "./Csv_Processor.js";
+import {loadCsv} from "./JSHelpers.js";
 
 let animationHelper;
 let boneScene;
-
-function loadPapaParse() {
-    return new Promise(function (resolve) {
-        require(['./js/vendor/papaparse.js'], papa => resolve(papa));
-    });
-}
 
 function getTimelineCtrlElements() {
     return {
@@ -42,28 +36,31 @@ function getBoneSceneElements() {
     }
 }
 
-const csvLoaderInit = loadPapaParse().then(papa => new CSVLoader(papa));
-const landmarkInit = csvLoaderInit.then((csvLoader) => csvLoader.loadCsv('./csv/N005_CTdata_Input_for_mtwtesla.csv'));
-const staticCsvInit = csvLoaderInit.then((csvLoader) => csvLoader.loadCsv('./csv/N005_CA_t01_static.csv'));
-const timeSeriesCsvInit = csvLoaderInit.then((csvLoader) => csvLoader.loadCsv('./csv/N005_CA_t01.csv'));
-const humerusLoader = promiseLoadSTL('./models/humerus.stl');
-const scapulaLoader = promiseLoadSTL('./models/scapula.stl');
+const humerusStlFile = './csv/O45_001_F_47_R/O45_001_F_47_R_Humerus_smooth.stl';
+const scapulaStlFile = './csv/O45_001_F_47_R/O45_001_F_47_R_Scapula_smooth.stl';
+const humerusLandmarksFile = './csv/O45_001_F_47_R/O45_001_F_47_R_humerus_landmarks.csv';
+const scapulaLandmarksFile = './csv/O45_001_F_47_R/O45_001_F_47_R_scapula_landmarks.csv';
+const biplaneTrajectoryFile = './csv/O45_001_F_47_R/O45_001_CA_t01.csv';
+const markerTrajectoryFile = './csv/O45_001_F_47_R/O45_001_CA_t01_markers.csv';
 
-Promise.all([humerusLoader, scapulaLoader, landmarkInit, staticCsvInit, timeSeriesCsvInit])
-    .then(([humerusGeometry, scapulaGeometry, landmarkResults, staticResults, timeSeriesResults]) => {
+Promise.all([promiseLoadSTL(humerusStlFile), promiseLoadSTL(scapulaStlFile), loadCsv(humerusLandmarksFile),
+    loadCsv(scapulaLandmarksFile), loadCsv(biplaneTrajectoryFile), loadCsv(markerTrajectoryFile)])
+    .then(([humerusGeometry, scapulaGeometry, humerusLandmarksCsv, scapulaLandmarksCsv, biplaneTrajectoryCsv, markerTrajectoriesCsv]) => {
     let {canvas, mainView, analysisGuiElement, sceneGuiElement} = getBoneSceneElements();
     let {playBtn, timeline, frameNumLbl} = getTimelineCtrlElements();
 
-    const landmarksInfo = new LandmarksInfo(landmarkResults.data);
-    const staticInfo = new StaticSTAInfo(staticResults);
-    const timeSeriesInfo = new TimeSeriesSTAInfo(timeSeriesResults);
+    const humerusLandmarks = new HumerusLandmarks(humerusLandmarksCsv.data);
+    const scapulaLandmarks = new ScapulaLandmarks(scapulaLandmarksCsv.data);
+    const biplaneTrajectory = new Trajectory(biplaneTrajectoryCsv.data);
+    const markerTrajectories = new MarkerTrajectories(markerTrajectoriesCsv.data);
 
     const renderer = new WebGLRenderer({canvas});
     const {contentWidth, contentHeight} = divGeometry(mainView);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(contentWidth, contentHeight);
 
-    boneScene = new BoneScene(renderer, mainView, analysisGuiElement, sceneGuiElement, landmarksInfo, staticInfo, timeSeriesInfo, humerusGeometry, scapulaGeometry);
+    boneScene = new BoneScene(renderer, mainView, analysisGuiElement, sceneGuiElement, humerusLandmarks, scapulaLandmarks,
+        biplaneTrajectory, markerTrajectories, humerusGeometry, scapulaGeometry);
     addCommonMarkerFields(boneScene);
     enableLandmarks(boneScene);
     enableViconMarkers(boneScene);
@@ -78,7 +75,7 @@ Promise.all([humerusLoader, scapulaLoader, landmarkInit, staticCsvInit, timeSeri
     boneScene.createSceneGraph();
     boneScene.repositionSceneGraphs();
     boneScene.createGUI();
-    animationHelper = new AnimationHelper(boneScene, timeSeriesInfo.NumFrames, playBtn, timeline, frameNumLbl);
+    animationHelper = new AnimationHelper(boneScene, biplaneTrajectory.NumFrames, playBtn, timeline, frameNumLbl);
 
     window.addEventListener('resize', () => boneScene.resizeScene());
 });
