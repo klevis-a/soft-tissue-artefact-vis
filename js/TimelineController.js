@@ -17,9 +17,9 @@ export class TimelineController {
         this.Timeline.step = 'any';
         this.FrameNumLbl.innerHTML = 1;
 
-        this.PlayBtn.onclick = () => this.handlePlayBtn();
-        this.Timeline.oninput = () => this.handleTimeLineInput();
-        this.Timeline.addEventListener('keydown', (event) => {
+        this.onPlayListener = () => this.handlePlayBtn();
+        this.timelineInputListener = () => this.handleTimeLineInput();
+        this.timelineKeyListener = (event) => {
             if (event.keyCode === 37) {
                 const currentVal = parseFloat(this.Timeline.value);
                 if (currentVal<=this.Timeline.min) {
@@ -40,7 +40,16 @@ export class TimelineController {
             }
             this.handleTimeLineInput();
             event.preventDefault();
-        });
+        }
+        this.PlayBtn.addEventListener('click', this.onPlayListener);
+        this.Timeline.addEventListener('input', this.timelineInputListener);
+        this.Timeline.addEventListener('keydown', this.timelineKeyListener);
+    }
+
+    dispose() {
+        this.PlayBtn.removeEventListener('click', this.onPlayListener);
+        this.Timeline.removeEventListener('input', this.timelineInputListener);
+        this.Timeline.removeEventListener('keydown', this.timelineKeyListener);
     }
 
     handlePlayBtn() {

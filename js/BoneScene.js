@@ -5,6 +5,7 @@ import {TrackballControls} from "./vendor/three.js/examples/jsm/controls/Trackba
 import {ScenePositionHelper} from "./ScenePositionHelper.js";
 import {GUI} from "./vendor/three.js/examples/jsm/libs/dat.gui.module.js";
 import {createSpotLightFolder, createDirectionalLightFolder, createHemisphereLightFolder} from "./GUIHelpers.js";
+import {removeAllChildNodes} from "./JSHelpers.js";
 
 export class BoneScene {
     static BONE_COLOR = 0xe3dac9;
@@ -53,6 +54,17 @@ export class BoneScene {
         this.normalizeHumerusGeometry();
         this.normalizeScapulaGeometry();
         this.computeHumerusLength();
+    }
+
+    dispose() {
+        this.humerusGeometry.dispose();
+        this.scapulaGeometry.dispose();
+        this.scene.dispose();
+        this.noSTAMarkerTracesDispose();
+        this.viconMarkerTracesDispose();
+        this.markerClustersDispose();
+        this.analysisGui.destroy();
+        removeAllChildNodes(this.analysisGuiElement);
     }
 
     get viewGeometry() {
@@ -349,7 +361,7 @@ export class BoneScene {
         // this.sceneGuiElement.appendChild(this.sceneGui.domElement);
         // this.sceneGui.close();
 
-        this.analysisGui = new GUI({resizable : false, name: 'analysisGUI', closeOnTop: true});
+        this.analysisGui = new GUI({resizable : false, name: 'analysisGUI', closeOnTop: true, autoPlace: false});
         this.dispatchEvent({type: 'gui', gui: this.analysisGui});
         this.analysisGuiElement.appendChild(this.analysisGui.domElement);
         this.analysisGui.close();

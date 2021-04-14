@@ -46,10 +46,12 @@ BoneScene.prototype.addViconMarker = function (name, segmentName, material) {
     const markerPos = this.markerTrajectories.markerPosVector(name, 0);
     if (markerPos == null) {
         this.viconMarkers[segmentName][name] = BoneScene.createMarker(material, new Vector3());
+        this.viconMarkers[segmentName][name].dataVisible = false;
         this.viconMarkers[segmentName][name].visible = false;
     }
     else {
         this.viconMarkers[segmentName][name] = BoneScene.createMarker(material, markerPos);
+        this.viconMarkers[segmentName][name].dataVisible = true;
         this.viconMarkers[segmentName][name].visible = this.markerSegmentVisibility[segmentName];
     }
     this.scene.add(this.viconMarkers[segmentName][name]);
@@ -84,6 +86,7 @@ export function enableViconMarkers(boneScene) {
                     const markerPosNext = scene.markerTrajectories.markerPosVector(markerName, nextFrame);
 
                     if (markerPosCurrent === null) {
+                        currentSegment[markerName].dataVisible = false;
                         currentSegment[markerName].visible = false;
                     }
                     else {
@@ -93,6 +96,7 @@ export function enableViconMarkers(boneScene) {
                         else {
                             currentSegment[markerName].position.copy(markerPosCurrent.lerp(markerPosNext, interpFactor));
                         }
+                        currentSegment[markerName].dataVisible = true;
                         currentSegment[markerName].visible = this.markerSegmentVisibility[segmentName];
                     }
                 }
@@ -103,9 +107,11 @@ export function enableViconMarkers(boneScene) {
                 for (const markerName in currentSegment) {
                     const markerPos = scene.markerTrajectories.markerPosVector(markerName, this.markerTrajectories.NumFrames-1);
                     if (markerPos === null) {
+                        currentSegment[markerName].dataVisible = false;
                         currentSegment[markerName].visible = false;
                     }
                     else {
+                        currentSegment[markerName].dataVisible = true;
                         currentSegment[markerName].visible = scene.markerSegmentVisibility[segmentName];
                         currentSegment[markerName].position.copy(markerPos);
                     }

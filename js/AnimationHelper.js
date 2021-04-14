@@ -15,6 +15,11 @@ export class AnimationHelper {
         this.render();
     }
 
+    dispose() {
+        cancelAnimationFrame(this.RequestId);
+        this.TimelineController.dispose();
+    }
+
     play(frameNum) {
         this.StartFrame = frameNum;
         this.StartTime = performance.now();

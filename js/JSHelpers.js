@@ -26,3 +26,13 @@ export function loadCsv(url, hasHeader = false) {
         });
     });
 }
+
+export function removeAllChildNodes(parent) {
+    while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+    }
+}
+
+export  function loadJson(jsonFile) {
+    return fetch(jsonFile).then(res => res.json());
+}

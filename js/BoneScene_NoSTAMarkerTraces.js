@@ -3,6 +3,7 @@ import {Vector3} from "./vendor/three.js/build/three.module.js";
 import {LineMaterial} from "./vendor/three.js/examples/jsm/lines/LineMaterial.js";
 import {LineGeometry} from "./vendor/three.js/examples/jsm/lines/LineGeometry.js";
 import {Line2} from "./vendor/three.js/examples/jsm/lines/Line2.js";
+import {traceGeometryDispose} from "./BoneScene_MarkerTracesCommon.js";
 
 BoneScene.SegmentNoSTALineMaterials = new Map([
     ['RUPAA', 'RED_NOSTA_LINE_MATERIAL'],
@@ -16,35 +17,38 @@ BoneScene.SegmentNoSTALineMaterials = new Map([
 ]);
 
 BoneScene.prototype.addNoSTAMarkerTrace = function(markerName, segmentName, material) {
-    if (this.noSTAMarkerTraces.Lines[segmentName] === undefined) {
-        this.noSTAMarkerTraces.Lines[segmentName] = {};
-    }
     if (this.noSTAMarkerTraces.NumSegments[segmentName] === undefined) {
         this.noSTAMarkerTraces.NumSegments[segmentName] = {};
     }
+    this.noSTAMarkerTraces.NumSegments[segmentName][markerName] = new Array(this.markerTrajectories.NumFrames);
 
     const markerRelPos = (markerName in this.noSTAMarkers[segmentName]) ? this.noSTAMarkers[segmentName][markerName].position : null;
 
-    this.noSTAMarkerTraces.NumSegments[segmentName][markerName] = new Array(this.markerTrajectories.NumFrames);
-    const positions = [];
-    let numSegments = -1;
-    for (let i=0; i<this.markerTrajectories.NumFrames; i++) {
-        const [segmentPos, segmentQuat] = this.segmentPose(segmentName, i);
-        if (markerRelPos !== null && segmentPos !== null && segmentQuat !== null) {
-            const markerPosition = new Vector3().copy(markerRelPos).applyQuaternion(segmentQuat).add(segmentPos);
-            positions.push(markerPosition.x, markerPosition.y, markerPosition.z);
-            numSegments++;
+    if (markerRelPos !== null) {
+        if (this.noSTAMarkerTraces.Lines[segmentName] === undefined) {
+            this.noSTAMarkerTraces.Lines[segmentName] = {};
         }
-        this.noSTAMarkerTraces.NumSegments[segmentName][markerName][i] = numSegments < 0 ? 0 : numSegments;
+
+        const positions = [];
+        let numSegments = -1;
+        for (let i=0; i<this.markerTrajectories.NumFrames; i++) {
+            const [segmentPos, segmentQuat] = this.segmentPose(segmentName, i);
+            if (segmentPos !== null && segmentQuat !== null) {
+                const markerPosition = new Vector3().copy(markerRelPos).applyQuaternion(segmentQuat).add(segmentPos);
+                positions.push(markerPosition.x, markerPosition.y, markerPosition.z);
+                numSegments++;
+            }
+            this.noSTAMarkerTraces.NumSegments[segmentName][markerName][i] = numSegments < 0 ? 0 : numSegments;
+        }
+        const lineGeometry = new LineGeometry();
+        lineGeometry.setPositions(positions);
+        this.noSTAMarkerTraces.Lines[segmentName][markerName] = new Line2(lineGeometry, material);
+        this.noSTAMarkerTraces.Lines[segmentName][markerName].computeLineDistances();
+        this.noSTAMarkerTraces.Lines[segmentName][markerName].scale.set(1,1,1);
+        this.noSTAMarkerTraces.Lines[segmentName][markerName].visible = true;
+        this.scene.add(this.noSTAMarkerTraces.Lines[segmentName][markerName]);
+        this.noSTAMarkerTraces.Lines[segmentName][markerName].geometry.maxInstancedCount = this.noSTAMarkerTraces.NumSegments[segmentName][markerName][0];
     }
-    const lineGeometry = new LineGeometry();
-    lineGeometry.setPositions(positions);
-    this.noSTAMarkerTraces.Lines[segmentName][markerName] = new Line2(lineGeometry, material);
-    this.noSTAMarkerTraces.Lines[segmentName][markerName].computeLineDistances();
-    this.noSTAMarkerTraces.Lines[segmentName][markerName].scale.set(1,1,1);
-    this.noSTAMarkerTraces.Lines[segmentName][markerName].visible = true;
-    this.scene.add(this.noSTAMarkerTraces.Lines[segmentName][markerName]);
-    this.noSTAMarkerTraces.Lines[segmentName][markerName].geometry.maxInstancedCount = this.noSTAMarkerTraces.NumSegments[segmentName][markerName][0];
 };
 
 BoneScene.prototype.addNoSTAMarkerTraces = function () {
@@ -58,6 +62,14 @@ BoneScene.prototype.addNoSTAMarkerTraces = function () {
     this.addNoSTAMarkerTrace('RSPIN', 'scapula', this[BoneScene.SegmentNoSTALineMaterials.get('RSPIN')]);
     this.addNoSTAMarkerTrace('RANGL', 'scapula', this[BoneScene.SegmentNoSTALineMaterials.get('RANGL')]);
 };
+
+BoneScene.prototype.noSTAMarkerTracesDispose = function () {
+    traceGeometryDispose(this.noSTAMarkerTraces);
+    this.RED_NOSTA_LINE_MATERIAL.dispose();
+    this.GREEN_NOSTA_LINE_MATERIAL.dispose();
+    this.BLUE_NOSTA_LINE_MATERIAL.dispose();
+    this.YELLOW_NOSTA_LINE_MATERIAL.dispose();
+}
 
 export function enableNoSTAMarkerTraces(boneScene) {
     boneScene.noSTAMarkerTraces = {};

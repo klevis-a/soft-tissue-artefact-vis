@@ -7,9 +7,19 @@ export function enableMarkerTracesGUI(boneScene) {
         for (const segmentName in scene.viconMarkerTraces.Lines) {
             for (const markerName in scene.viconMarkerTraces.Lines[segmentName]) {
                 viconMarkerTracesFolder.add(scene.viconMarkerTraces.Lines[segmentName][markerName],'visible').name(markerName).onChange((val) => {
-                    scene.noSTAMarkerTraces.Lines[segmentName][markerName].visible = val;
+                    if (markerName in scene.noSTAMarkerTraces.Lines[segmentName]) {
+                        scene.noSTAMarkerTraces.Lines[segmentName][markerName].visible = val;
+                    }
                 })
             }
         }
     });
+}
+
+export function traceGeometryDispose(traces) {
+    for (const [segmentName, markersObj] of Object.entries(traces.Lines)) {
+        for (const [markerName, lineObj] of Object.entries(markersObj)) {
+            lineObj.geometry.dispose();
+        }
+    }
 }

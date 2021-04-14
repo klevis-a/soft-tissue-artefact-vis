@@ -47,7 +47,7 @@ export function enableMarkerGUI(boneScene) {
             viconMarkerFolder.add(scene.markerSegmentVisibility, segmentName).name(BoneScene.segmentFriendNameMap.get(segmentName)).onChange(() => {
                 const currentSegment = scene.viconMarkers[segmentName];
                 for (const markerName in currentSegment) {
-                    currentSegment[markerName].visible = scene.markerSegmentVisibility[segmentName];
+                    currentSegment[markerName].visible = currentSegment[markerName].dataVisible && scene.markerSegmentVisibility[segmentName];
                 }
 
                 const currentSegmentNoSTA = this.noSTAMarkers[segmentName];

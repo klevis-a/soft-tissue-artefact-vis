@@ -30,6 +30,7 @@ BoneScene.prototype.addNoSTAMarker = function(name, segment, material) {
         const segmentPose = new Matrix4().makeRotationFromQuaternion(segmentQuat).setPosition(segmentPos);
         const markerInSegment = new Vector3().copy(this.markerTrajectories.markerPosVector(name, firstFrame)).applyMatrix4(segmentPose.getInverse(segmentPose));
         this.noSTAMarkers[segment][name] = BoneScene.createMarker(material,  markerInSegment);
+        this.noSTAMarkers[segment][name].dataVisible = true;
         this[segment].add(this.noSTAMarkers[segment][name]);
     }
 };

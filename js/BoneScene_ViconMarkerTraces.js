@@ -2,6 +2,7 @@ import {BoneScene} from "./BoneScene.js";
 import {LineMaterial} from "./vendor/three.js/examples/jsm/lines/LineMaterial.js";
 import {LineGeometry} from "./vendor/three.js/examples/jsm/lines/LineGeometry.js";
 import {Line2} from "./vendor/three.js/examples/jsm/lines/Line2.js";
+import {traceGeometryDispose} from "./BoneScene_MarkerTracesCommon.js";
 
 BoneScene.SegmentLineMaterials = new Map([
     ['RUPAA', 'RED_LINE_MATERIAL'],
@@ -15,9 +16,6 @@ BoneScene.SegmentLineMaterials = new Map([
 ]);
 
 BoneScene.prototype.addViconMarkerTrace = function(markerName, segmentName, material) {
-    if (this.viconMarkerTraces.Lines[segmentName] === undefined) {
-        this.viconMarkerTraces.Lines[segmentName] = {};
-    }
     if (this.viconMarkerTraces.NumSegments[segmentName] === undefined) {
         this.viconMarkerTraces.NumSegments[segmentName] = {};
     }
@@ -32,14 +30,21 @@ BoneScene.prototype.addViconMarkerTrace = function(markerName, segmentName, mate
         }
         this.viconMarkerTraces.NumSegments[segmentName][markerName][i] = numSegments < 0 ? 0 : numSegments;
     }
-    const lineGeometry = new LineGeometry();
-    lineGeometry.setPositions(positions);
-    this.viconMarkerTraces.Lines[segmentName][markerName] = new Line2(lineGeometry, material);
-    this.viconMarkerTraces.Lines[segmentName][markerName].computeLineDistances();
-    this.viconMarkerTraces.Lines[segmentName][markerName].scale.set(1,1,1);
-    this.viconMarkerTraces.Lines[segmentName][markerName].visible = true;
-    this.scene.add(this.viconMarkerTraces.Lines[segmentName][markerName]);
-    this.viconMarkerTraces.Lines[segmentName][markerName].geometry.maxInstancedCount = this.viconMarkerTraces.NumSegments[segmentName][markerName][0];
+
+    if (numSegments > 0) {
+        if (this.viconMarkerTraces.Lines[segmentName] === undefined) {
+            this.viconMarkerTraces.Lines[segmentName] = {};
+        }
+
+        const lineGeometry = new LineGeometry();
+        lineGeometry.setPositions(positions);
+        this.viconMarkerTraces.Lines[segmentName][markerName] = new Line2(lineGeometry, material);
+        this.viconMarkerTraces.Lines[segmentName][markerName].computeLineDistances();
+        this.viconMarkerTraces.Lines[segmentName][markerName].scale.set(1,1,1);
+        this.viconMarkerTraces.Lines[segmentName][markerName].visible = true;
+        this.scene.add(this.viconMarkerTraces.Lines[segmentName][markerName]);
+        this.viconMarkerTraces.Lines[segmentName][markerName].geometry.maxInstancedCount = this.viconMarkerTraces.NumSegments[segmentName][markerName][0];
+    }
 };
 
 BoneScene.prototype.addViconMarkerTraces = function() {
@@ -53,6 +58,14 @@ BoneScene.prototype.addViconMarkerTraces = function() {
     this.addViconMarkerTrace('RSPIN', 'scapula', this[BoneScene.SegmentLineMaterials.get('RSPIN')]);
     this.addViconMarkerTrace('RANGL', 'scapula', this[BoneScene.SegmentLineMaterials.get('RANGL')]);
 };
+
+BoneScene.prototype.viconMarkerTracesDispose = function () {
+    traceGeometryDispose(this.viconMarkerTraces);
+    this.RED_LINE_MATERIAL.dispose();
+    this.GREEN_LINE_MATERIAL.dispose();
+    this.BLUE_LINE_MATERIAL.dispose();
+    this.YELLOW_LINE_MATERIAL.dispose();
+}
 
 export function enableViconMarkerTraces(boneScene) {
     boneScene.viconMarkerTraces = {};
